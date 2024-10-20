@@ -1,6 +1,6 @@
 public class ReverseCard extends Card{
     
-    public ReverseCard(String value, String color) {
+    public ReverseCard(int value, String color) {
         super(value, color); 
     }
 

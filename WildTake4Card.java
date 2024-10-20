@@ -1,6 +1,6 @@
-public class Take4Card extends WildCard{
+public class WildTake4Card extends WildCard{
     
-    public Take4Card(String value) {
+    public WildTake4Card(int value) {
         super(value); 
     }
 

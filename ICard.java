@@ -1,7 +1,7 @@
 public interface ICard {
-    String getValue();
+    int getValue();
     String getColor();
-    void setValue(String value);
+    void setValue(int value);
     void setColor(String color);
     void performAction();  // For special actions like Skip, Take2, etc.
 }

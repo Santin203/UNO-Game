@@ -1,14 +1,44 @@
 public abstract class Card implements ICard {
-    protected String value;
+    protected int value;
     protected String color;
 
-    public Card(String value, String color) {
+    public Card(int value, String color) {
         this.value = value;
         this.color = color;
     }
+    
+    public static ICard buildCard(String type, int value, String color){
+        ICard newCard;
+
+        switch(type)
+        {
+            case "number":
+                newCard = new NumberCard(value, color);
+                break;
+            case "skip":
+                newCard = new SkipCard(value, color);
+                break;
+            case "take2":
+                newCard = new Take2Card(value, color);
+                break;
+            case "reverse":
+                newCard = new ReverseCard(value, color);
+                break;
+            case "wild":
+                newCard = new WildCard(-1);
+                break;
+            case "wildtake4":
+                newCard = new WildTake4Card(value);
+                break;
+            default:
+                newCard = new NumberCard(-1, color);
+                break;
+        }
+        return newCard;
+    }
 
     @Override
-    public String getValue() {
+    public int getValue() {
         return value;
     }
 
@@ -18,7 +48,7 @@ public abstract class Card implements ICard {
     }
 
     @Override
-    public void setValue(String value) {
+    public void setValue(int value) {
         this.value = value;
     }
 

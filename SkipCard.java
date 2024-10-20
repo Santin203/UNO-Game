@@ -1,6 +1,6 @@
 public class SkipCard extends Card {
 
-    public SkipCard(String value, String color) {
+    public SkipCard(int value, String color) {
         super(value, color); 
     }
     

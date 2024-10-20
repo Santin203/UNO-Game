@@ -3,6 +3,6 @@ public interface IDeck {
     ICard giveCard();
     void addCard(ICard card);
     void removeCard(ICard card);
-    void fillDeck(IDeck deckUnfilled, int deckPercentage);
+    void fillDeck(IDeck deckUnfilled, boolean filled);
 }
 
