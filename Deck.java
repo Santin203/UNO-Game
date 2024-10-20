@@ -5,7 +5,7 @@ public class Deck implements IDeck {
     private ArrayList<ICard> cards;
 
     public Deck() {
-        cards = new ArrayList<>();
+        cards = new ArrayList<ICard>();
     }
 
     @Override
@@ -26,6 +26,29 @@ public class Deck implements IDeck {
     @Override
     public void removeCard(ICard card) {
         cards.remove(card);
+    }
+
+    public static IDeck buildDeck(int deckPercentage)
+    {
+        IDeck newDeck = new Deck();
+
+        newDeck.fillDeck(newDeck, deckPercentage);
+
+        return newDeck;
+    }
+
+    @Override
+    public void fillDeck(IDeck deckUnfilled, int deckPercentage)
+    {
+        int cardAmount = 108;
+        
+        double scale = deckPercentage/100;
+
+        double finalCardAmount = cardAmount*scale;
+
+        
+
+
     }
 }
 

@@ -1,4 +1,4 @@
-public class Card implements ICard {
+public abstract class Card implements ICard {
     protected String value;
     protected String color;
 
@@ -28,8 +28,6 @@ public class Card implements ICard {
     }
 
     @Override
-    public void performAction() {
-        // Normal cards do nothing special
-    }
+    public abstract void performAction();
 }
 

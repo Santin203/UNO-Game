@@ -1,12 +1,10 @@
-public class Wildcard extends Card {
+public abstract class WildCard extends Card {
 
-    public Wildcard(String value) {
+    public WildCard(String value) {
         super(value, "");  // Wildcards initially have no color
     }
 
     @Override
-    public void performAction() {
-        // Logic for wildcards
-    }
+    public abstract void performAction();
 }
 
