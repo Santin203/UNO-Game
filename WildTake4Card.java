@@ -8,4 +8,9 @@ public class WildTake4Card extends WildCard{
     public void performAction() {
 
     }
+
+    @Override
+    public void setIsPlayeable(ICard topCard){
+        
+    }
 }

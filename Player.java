@@ -31,4 +31,9 @@ public class Player implements IPlayer {
     public String getName() {
         return name;
     }
+
+    @Override
+    public ArrayList<ICard> getHand(){
+        return hand;
+    }
 }

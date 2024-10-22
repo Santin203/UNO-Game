@@ -4,7 +4,6 @@ public interface IDeck {
     void addCard(ICard card);
     void removeCard(ICard card);
     void fillDeck(IDeck deckUnfilled, int decksN);
-    String getTopColor();
-    int getTopNumber();
+    ICard getTopCard();
 }
 

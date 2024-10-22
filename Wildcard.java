@@ -8,5 +8,10 @@ public class WildCard extends Card {
     public void performAction(){
         
     }
+
+    @Override
+    public void setIsPlayeable(ICard topCard){
+        this.isPlayeable = true;
+    }
 }
 

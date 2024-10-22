@@ -28,8 +28,7 @@ public class Deck implements IDeck {
         cards.remove(card);
     }
 
-    public static IDeck buildDeck(int decksN)
-    {
+    public static IDeck buildDeck(int decksN){
         IDeck newDeck = new Deck();
 
         newDeck.fillDeck(newDeck, decksN);
@@ -37,16 +36,10 @@ public class Deck implements IDeck {
         return newDeck;
     }
 
-    @Override
-    public String getTopColor()
-    {
-        return cards.get(cards.size() -1).getColor();
-    }
 
     @Override
-    public int getTopNumber()
-    {
-        return cards.get(cards.size() -1).getValue();
+    public ICard getTopCard(){
+        return cards.get(cards.size() -1);
     }
 
     @Override
@@ -69,18 +62,22 @@ public class Deck implements IDeck {
                         cards.add(Card.buildCard("number", j, color));
                         cards.add(Card.buildCard("number", j, color));
                     }
-
+                    int specialValue = -1;
                     //Add two cards of each special type per color
+                    //Skip's value = -1
+                    //Reverse value = -2
+                    //Take 2 value = -3
                     for (String type: specialTypeList)
                     {
-                    cards.add(Card.buildCard(type, -1, color)); 
-                    cards.add(Card.buildCard(type, -1, color));
+                        cards.add(Card.buildCard(type, specialValue, color)); 
+                        cards.add(Card.buildCard(type, specialValue, color));
+                        specialValue -= 1;
                     }
                 }
                 //Add wild and take 4 cards
                 for (int k = 0; k < 4; k++) {
                     cards.add(Card.buildCard("wild", -1, ""));
-                    cards.add(Card.buildCard("wildtake4", 4, ""));
+                    cards.add(Card.buildCard("wildtake4", -4, ""));
                 }             
             }
             

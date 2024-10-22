@@ -1,10 +1,12 @@
 public abstract class Card implements ICard {
     protected int value;
     protected String color;
+    protected boolean isPlayeable;
 
     public Card(int value, String color) {
         this.value = value;
         this.color = color;
+        this.isPlayeable = false;
     }
     
     public static ICard buildCard(String type, int value, String color){
@@ -25,7 +27,7 @@ public abstract class Card implements ICard {
                 newCard = new ReverseCard(value, color);
                 break;
             case "wild":
-                newCard = new WildCard(-1);
+                newCard = new WildCard(-5);
                 break;
             case "wildtake4":
                 newCard = new WildTake4Card(value);
@@ -59,5 +61,13 @@ public abstract class Card implements ICard {
 
     @Override
     public abstract void performAction();
+
+    @Override
+    public abstract void setIsPlayeable(ICard topCard);
+
+    @Override
+    public boolean getIsPlayeable(){
+        return this.isPlayeable;
+    }
 }
 
