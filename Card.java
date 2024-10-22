@@ -6,7 +6,6 @@ public abstract class Card implements ICard {
     public Card(int value, String color) {
         this.value = value;
         this.color = color;
-        this.isPlayeable = false;
     }
     
     public static ICard buildCard(String type, int value, String color){
@@ -61,13 +60,5 @@ public abstract class Card implements ICard {
 
     @Override
     public abstract void performAction();
-
-    @Override
-    public abstract void setIsPlayeable(ICard topCard);
-
-    @Override
-    public boolean getIsPlayeable(){
-        return this.isPlayeable;
-    }
 }
 

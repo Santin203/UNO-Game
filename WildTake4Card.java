@@ -9,8 +9,4 @@ public class WildTake4Card extends WildCard{
 
     }
 
-    @Override
-    public void setIsPlayeable(ICard topCard){
-        
-    }
 }

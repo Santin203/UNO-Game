@@ -9,8 +9,4 @@ public class SkipCard extends Card {
 
     }
 
-    @Override
-    public void setIsPlayeable(ICard topCard){
-        
-    }
 }

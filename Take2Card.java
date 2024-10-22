@@ -9,8 +9,4 @@ public class Take2Card extends Card{
 
     }
 
-    @Override
-    public void setIsPlayeable(ICard topCard){
-        
-    }
 }

@@ -8,9 +8,4 @@ public class ReverseCard extends Card{
     public void performAction() {
 
     }
-
-    @Override
-    public void setIsPlayeable(ICard topCard){
-        
-    }
 }
