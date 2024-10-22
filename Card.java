@@ -11,30 +11,15 @@ public abstract class Card implements ICard {
     public static ICard buildCard(String type, int value, String color){
         ICard newCard;
 
-        switch(type)
-        {
-            case "number":
-                newCard = new NumberCard(value, color);
-                break;
-            case "skip":
-                newCard = new SkipCard(value, color);
-                break;
-            case "take2":
-                newCard = new Take2Card(value, color);
-                break;
-            case "reverse":
-                newCard = new ReverseCard(value, color);
-                break;
-            case "wild":
-                newCard = new WildCard(-5);
-                break;
-            case "wildtake4":
-                newCard = new WildTake4Card(value);
-                break;
-            default:
-                newCard = new NumberCard(-1, color);
-                break;
-        }
+        newCard = switch (type) {
+            case "number" -> new NumberCard(value, color);
+            case "skip" -> new SkipCard(value, color);
+            case "take2" -> new Take2Card(value, color);
+            case "reverse" -> new ReverseCard(value, color);
+            case "wild" -> new WildCard(-5);
+            case "wildtake4" -> new WildTake4Card(value);
+            default -> new NumberCard(-1, color);
+        };
         return newCard;
     }
 

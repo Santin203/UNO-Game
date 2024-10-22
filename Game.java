@@ -104,7 +104,7 @@ public class Game implements IGame {
         }
 
         //If cards are available to be played
-        if(playableIndexes.size() > 0)
+        if(!playableIndexes.isEmpty())
         {
             options.put("playCard", true);
         }
