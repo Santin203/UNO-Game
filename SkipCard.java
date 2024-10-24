@@ -1,12 +1,18 @@
-public class SkipCard extends Card {
-
-    public SkipCard(int value, String color) {
-        super(value, color); 
+public class SkipCard extends CardDecorator {
+    public SkipCard(ICard decoratedCard) {
+        super(decoratedCard);
     }
-    
+
     @Override
-    public void performAction() {
-
+    public void play() {
+        // Add skip logic before or after playing the card
+        System.out.println("Player skips their turn.");
+        super.play();  // Call the base card's play method
     }
 
+    @Override
+    public boolean canBePlayed(ICard topCard) {
+        // Additional logic for skip cards (if any)
+        return super.canBePlayed(topCard);
+    }
 }

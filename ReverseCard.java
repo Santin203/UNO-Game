@@ -1,11 +1,14 @@
-public class ReverseCard extends Card{
-    
-    public ReverseCard(int value, String color) {
-        super(value, color); 
+public class ReverseCard extends CardDecorator {
+
+    public ReverseCard(ICard card) {
+        super(card);
     }
 
     @Override
-    public void performAction() {
-
+    public void play() {
+        // Add reverse card specific action
+        System.out.println("Reverse action performed");
+        // Optionally call the decorated card's action
+        super.play();
     }
 }

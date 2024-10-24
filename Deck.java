@@ -15,7 +15,7 @@ public class Deck implements IDeck {
 
     @Override
     public ICard giveCard() {
-        return cards.remove(cards.size() - 1);
+        return cards.isEmpty() ? null : cards.remove(cards.size() - 1);
     }
 
     @Override
@@ -28,60 +28,72 @@ public class Deck implements IDeck {
         cards.remove(card);
     }
 
-    public static IDeck buildDeck(int decksN){
-        IDeck newDeck = new Deck();
-
-        newDeck.fillDeck(newDeck, decksN);
-
-        return newDeck;
-    }
-
-
     @Override
-    public ICard getTopCard(){
-        return cards.get(cards.size() -1);
+    public ICard getTopCard() {
+        return cards.isEmpty() ? null : cards.get(cards.size() - 1);
     }
 
     @Override
-    public void fillDeck(IDeck deckUnfilled, int decksN)
-    {
+    public void fillDeck(IDeck deckUnfilled, int decksN) {
         String[] colorList = {"blue", "red", "yellow", "green"};
-
         String[] specialTypeList = {"skip", "reverse", "take2"};
 
-        if(decksN > 0){
-            for(int i = 0; i < decksN; i++)
-            {
-                //Iterate through values of colorList
+        if (decksN > 0) {
+            for (int i = 0; i < decksN; i++) {
+                // Create number cards and special cards for each color
                 for (String color : colorList) {
-                    
-                    //Add cards from 0-9, add cards from 1-9 twice
-                    cards.add(Card.buildCard("number", 0, color));
-                    for(int j = 1; j < 10; j ++)
-                    {
-                        cards.add(Card.buildCard("number", j, color));
-                        cards.add(Card.buildCard("number", j, color));
-                    }
-                    int specialValue = -1;
-                    //Add two cards of each special type per color
-                    //Skip's value = -1
-                    //Reverse value = -2
-                    //Take 2 value = -3
-                    for (String type: specialTypeList)
-                    {
-                        cards.add(Card.buildCard(type, specialValue, color)); 
-                        cards.add(Card.buildCard(type, specialValue, color));
-                        specialValue -= 1;
-                    }
+                    createNumberCards(color, deckUnfilled);
+                    createSpecialCards(color, specialTypeList, deckUnfilled);
                 }
-                //Add wild and take 4 cards
-                for (int k = 0; k < 4; k++) {
-                    cards.add(Card.buildCard("wild", -1, ""));
-                    cards.add(Card.buildCard("wildtake4", -4, ""));
-                }             
+                // Add wild cards and wild take 4 cards (no color)
+                createWildCards(deckUnfilled);
             }
-            
         }
     }
-}
 
+    private void createNumberCards(String color, IDeck deckUnfilled) {
+        // Add number cards 0-9, 1-9 twice
+        deckUnfilled.addCard(new BasicCard(color, "0"));
+        for (int j = 1; j < 10; j++) {
+            deckUnfilled.addCard(new BasicCard(color, String.valueOf(j)));
+            deckUnfilled.addCard(new BasicCard(color, String.valueOf(j)));
+        }
+    }
+
+    private void createSpecialCards(String color, String[] specialTypeList, IDeck deckUnfilled) {
+        for (String type : specialTypeList) {
+            // Add two of each special card per color
+            ICard specialCard = createSpecialCard(type, color);
+            deckUnfilled.addCard(specialCard);
+            deckUnfilled.addCard(specialCard);
+        }
+    }
+
+    private ICard createSpecialCard(String type, String color) {
+        switch (type) {
+            case "skip":
+                return new SkipCard(new BasicCard(color, "skip"));
+            case "reverse":
+                return new ReverseCard(new BasicCard(color, "reverse"));
+            case "take2":
+                return new Draw2Card(new BasicCard(color, "take2"));
+            default:
+                throw new IllegalArgumentException("Unknown special card type: " + type);
+        }
+    }
+
+    private void createWildCards(IDeck deckUnfilled) {
+        for (int k = 0; k < 4; k++) {
+            // Wild and WildTake4 cards don't have colors
+            deckUnfilled.addCard(new ChangeColorCard(new BasicCard("", "wild"), ""));
+            deckUnfilled.addCard(new Draw4Card(new BasicCard("", "wildtake4")));
+        }
+    }
+
+    public static IDeck buildDeck(int decksN) {
+        IDeck newDeck = new Deck();
+        newDeck.fillDeck(newDeck, decksN);
+        newDeck.shuffleCards();
+        return newDeck;
+    }
+}
