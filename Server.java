@@ -68,14 +68,15 @@ public class Server implements Observable {
 
         @Override
         public void run() {
+            ClientObserver clientObserver = null;
             try {
                 input = new ObjectInputStream(socket.getInputStream());
                 output = new ObjectOutputStream(socket.getOutputStream());
-
+        
                 // Add this client as an observer
-                ClientObserver clientObserver = new ClientObserver(output);
+                clientObserver = new ClientObserver(output);
                 addObserver(clientObserver);
-
+        
                 // Handle game logic, such as receiving cards, moves, etc.
                 while (true) {
                     String message = (String) input.readObject();  // Receive from client
@@ -84,11 +85,21 @@ public class Server implements Observable {
                     // Notify all clients about the received message (e.g., player's move)
                     notifyObservers(message);
                 }
-
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
+            } finally {
+                // Clean up when a player disconnects
+                if (clientObserver != null) {
+                    removeObserver(clientObserver);
+                }
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
+        
     }
 
     // Inner class for ClientObserver, implements Observer

@@ -1,36 +1,27 @@
 import java.io.*;
 import java.net.*;
 
-// Client class with Observer implementation
 public class Client implements Observer {
     private Socket socket;
     private ObjectInputStream input;
     private ObjectOutputStream output;
+    private ClientGUI gui;
 
-    public Client(String address, int port) {
+    public Client(String address, int port, ClientGUI gui) {
+        this.gui = gui;  // Reference to the GUI
         try {
             socket = new Socket(address, port);
-            input = new ObjectInputStream(socket.getInputStream());
             output = new ObjectOutputStream(socket.getOutputStream());
+            input = new ObjectInputStream(socket.getInputStream());
             System.out.println("Connected to UNO server!");
 
-            // Start listening for server updates
-            new Thread(new ServerListener()).start();
-
-            // Simulate sending messages to the server (e.g., playing a card)
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            while (true) {
-                System.out.println("Enter message (e.g., played card): ");
-                String message = reader.readLine();
-                sendToServer(message);
-            }
-
+            new Thread(new ServerListener()).start();  // Start listening for server updates
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("Failed to connect to server.");
         }
     }
 
-    // Send a message to the server
     public void sendToServer(String message) {
         try {
             output.writeObject(message);
@@ -40,13 +31,11 @@ public class Client implements Observer {
         }
     }
 
-    // Update method (Observer pattern)
     @Override
     public void update(String message) {
-        System.out.println("Update from server: " + message);  // Display server updates
+        gui.updateMessageArea(message);  // Update GUI with messages from the server
     }
 
-    // Inner class to listen for updates from the server
     private class ServerListener implements Runnable {
         @Override
         public void run() {
@@ -54,6 +43,7 @@ public class Client implements Observer {
                 while (true) {
                     String message = (String) input.readObject();
                     System.out.println("Received from server: " + message);
+                    update(message);  // Call the update method
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
@@ -62,7 +52,8 @@ public class Client implements Observer {
     }
 
     public static void main(String[] args) {
-        Client client = new Client("localhost", 12345);  // Connect to server
+        ClientGUI gui = new ClientGUI(null);  // Create GUI without client first
+        Client client = new Client("localhost", 12345, gui);  // Pass GUI to client
+        gui.client = client;  // Link client to the GUI
     }
 }
-
