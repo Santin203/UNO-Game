@@ -47,6 +47,8 @@ public class Game implements IGame {
         {
             currentPlayer = players.get(playerIndex);
             nextTurn();
+            previousPlayer = currentPlayer;
+            playerIndex = players.size()%(playerIndex + order);
         }
     }
 
@@ -65,7 +67,8 @@ public class Game implements IGame {
             "playCard", false, 
             "pickCard", false, 
             "challengeTake4", false, 
-            "challengeUno", false);
+            "challengeUno", false,
+            "callUno", false);
 
         // Check which cards can be played from the player's hand
         ArrayList<Integer> playableIndexes = new ArrayList<>();
