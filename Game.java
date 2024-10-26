@@ -47,6 +47,12 @@ public class Game implements IGame {
         {
             currentPlayer = players.get(playerIndex);
             nextTurn();
+            //If current player has no more cards
+            if(currentPlayer.checkStatus() == 1)
+            {
+                //Current player Won, game ends
+                break;
+            }
             previousPlayer = currentPlayer;
             playerIndex = players.size()%(playerIndex + order);
         }
@@ -97,15 +103,61 @@ public class Game implements IGame {
         //Execute action from player
         switch(action)
         {
-            case "pickCard" -> currentPlayer.drawCard(gamePile.giveCard());
+            case "pickCard" -> {
+                //Draw card from gamePile
+                currentPlayer.drawCard(gamePile.giveCard());
+                //Check if card can be played inmediately
+                if(currentHand.get(currentHand.size()-1).canBePlayed(currentTopCard))
+                {
+                    int playerAction = 0;
+                    if(playerAction == 0)
+                    {
+                        currentPlayer.playCard(currentHand.get(currentHand.size()-1), this);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                }
             case "playCard" -> {
+                boolean calledUNO = false;
+
+                if(currentHand.size() == 2)
+                {
+                    options.put("callUno", true);
+                    //Add logic to call UNO from UI
+                }
                 //Add code to chose card from UI
                 //Replace with logic
-                int cardIndex = 0;
+                int cardIndex = playableIndexes.get(0);
                 //Play card at selected index
                 currentPlayer.playCard(currentHand.get(cardIndex), this);
+                switch(currentHand.size())
+                {
+                    case 0:
+                        //Won
+                        currentPlayer.setStatus(1);
+                    case 1:
+                        if(calledUNO)
+                        {
+                            //Called UNO properly
+                            currentPlayer.setStatus(2);
+                        }
+                        else
+                        {
+                            //Didn't call UNO
+                            currentPlayer.setStatus(3);
+                        }
+                        break;
+                    default:
+                        //Still playing like normal
+                        currentPlayer.setStatus(0);
+                }
+                return;
             }
             default -> {
+                return;
             }
         }
 

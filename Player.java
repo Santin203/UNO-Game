@@ -10,7 +10,7 @@ public class Player implements IPlayer {
     public Player(String name) {
         this.name = name;
         this.hand = new ArrayList<>();
-        this.status = 0;  // 0 = playing, 1 = winner, etc.
+        this.status = 0;  // 0 = playing, 1 = winner, 2 = one card-called UNO, 3 = one card-didn't called UNO
     }
 
     @Override
@@ -30,6 +30,11 @@ public class Player implements IPlayer {
     @Override
     public int checkStatus() {
         return status;
+    }
+
+    @Override
+    public void setStatus(int newStatus) {
+        this.status = newStatus;
     }
 
     @Override
@@ -54,4 +59,5 @@ public class Player implements IPlayer {
         String option = availableOptions.get(0); 
         return option;
     }
+
 }
