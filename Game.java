@@ -83,9 +83,29 @@ public class Game implements IGame {
         // If cards are available to be played
         if (!playableIndexes.isEmpty()) {
             options.put("playCard", true);
-        } else {
-            options.put("pickCard", true);
+        } 
+
+        //Player can always pick a card
+        options.put("pickCard", true);
+
+        //Get action from player
+        String action = currentPlayer.getAction(options);
+
+        //Execute action from player
+        switch(action)
+        {
+            case "pickCard" -> currentPlayer.drawCard(gamePile.giveCard());
+            case "playCard" -> {
+                //Add code to chose card from UI
+                //Replace with logic
+                int cardIndex = 0;
+                //Play card at selected index
+                currentPlayer.playCard(currentHand.get(cardIndex));
+            }
+            default -> {
+            }
         }
+
     }
 
 }

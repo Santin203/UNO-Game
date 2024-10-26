@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Player implements IPlayer {
     private String name;
@@ -19,6 +21,8 @@ public class Player implements IPlayer {
     @Override
     public boolean playCard(ICard card) {
         // Logic to play a card
+        card.play();
+        hand.remove(card);
         return true;
     }
 
@@ -35,5 +39,18 @@ public class Player implements IPlayer {
     @Override
     public ArrayList<ICard> getHand(){
         return hand;
+    }
+
+    @Override
+    public String getAction(Map<String, Boolean> options){
+        ArrayList<String> availableOptions = options.entrySet().stream()
+                .filter(entry -> entry.getValue()) // Keep only entries with true values
+                .map(Map.Entry::getKey)            // Extract the keys
+                .collect(Collectors.toCollection(ArrayList::new));
+        
+        //Insert code to get input from user through UI
+        //Replace current line with logic
+        String option = availableOptions.get(0); 
+        return option;
     }
 }
