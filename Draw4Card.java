@@ -5,12 +5,12 @@ public class Draw4Card extends CardDecorator {
     }
 
     @Override
-    public void play() {
+    public void play(IGame game) {
         // Special logic for playing Wild Draw Four
         System.out.println("Wild Draw Four card played!");
         
         // Call the base card's play method (if needed)
-        super.play();
+        super.play(game);
         
         // Apply Wild Draw Four behavior
         applyWildTake4Effect();

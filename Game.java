@@ -100,12 +100,25 @@ public class Game implements IGame {
                 //Replace with logic
                 int cardIndex = 0;
                 //Play card at selected index
-                currentPlayer.playCard(currentHand.get(cardIndex));
+                currentPlayer.playCard(currentHand.get(cardIndex), this);
             }
             default -> {
             }
         }
 
+    }
+
+    @Override
+    public IDeck getDeck(String deck){
+        switch(deck)
+        {
+            case "discard":
+                return gamePile;
+            case "game":
+                return discardPile;
+            default:
+                return discardPile;
+        }
     }
 
 }

@@ -19,9 +19,10 @@ public class Player implements IPlayer {
     }
 
     @Override
-    public boolean playCard(ICard card) {
+    public boolean playCard(ICard card, IGame game) {
         // Logic to play a card
-        card.play();
+        card.play(game);
+        game.getDeck("discard").addCard(card);
         hand.remove(card);
         return true;
     }

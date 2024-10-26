@@ -6,8 +6,8 @@ public abstract class CardDecorator implements ICard {
     }
 
     @Override
-    public void play() {
-        decoratedCard.play();
+    public void play(IGame game) {
+        decoratedCard.play(game);
     }
 
     @Override

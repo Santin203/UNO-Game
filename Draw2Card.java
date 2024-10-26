@@ -5,12 +5,12 @@ public class Draw2Card extends CardDecorator {
     }
 
     @Override
-    public void play() {
+    public void play(IGame game) {
         // Special logic for playing Draw Two
         System.out.println("Draw Two card played!");
 
         // Call the base card's play method (if needed)
-        super.play();
+        super.play(game);
 
         // Apply Draw Two behavior
         applyDraw2Effect();

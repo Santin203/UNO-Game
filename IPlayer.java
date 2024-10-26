@@ -3,7 +3,7 @@ import java.util.Map;
 
 public interface IPlayer {
     void drawCard(ICard card);
-    boolean playCard(ICard card);
+    boolean playCard(ICard card, IGame game);
     int checkStatus();
     String getName();
     ArrayList<ICard> getHand();

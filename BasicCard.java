@@ -8,7 +8,7 @@ public class BasicCard implements ICard {
     }
 
     @Override
-    public void play() {
+    public void play(IGame game) {
         // Basic play logic, such as updating game state
         // For example, this could be setting the current color and value of the game
         System.out.println("Played " + this.toString());

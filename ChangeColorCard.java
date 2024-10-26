@@ -7,10 +7,10 @@ public class ChangeColorCard extends CardDecorator {
     }
 
     @Override
-    public void play() {
+    public void play(IGame game) {
         // Add change color logic
         System.out.println("Changing the color to: " + newColor);
-        super.play();  // Call the base card's play method
+        super.play(game);  // Call the base card's play method
     }
 
     @Override

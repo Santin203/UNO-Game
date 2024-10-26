@@ -4,10 +4,10 @@ public class SkipCard extends CardDecorator {
     }
 
     @Override
-    public void play() {
+    public void play(IGame game) {
         // Add skip logic before or after playing the card
         System.out.println("Player skips their turn.");
-        super.play();  // Call the base card's play method
+        super.play(game);  // Call the base card's play method
     }
 
     @Override
