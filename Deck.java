@@ -36,7 +36,7 @@ public class Deck implements IDeck {
     @Override
     public void fillDeck(IDeck deckUnfilled, int decksN) {
         String[] colorList = {"blue", "red", "yellow", "green"};
-        String[] specialTypeList = {"skip", "reverse", "take2"};
+        String[] specialTypeList = {"skip", "reverse", "draw2"};
 
         if (decksN > 0) {
             for (int i = 0; i < decksN; i++) {
@@ -71,14 +71,16 @@ public class Deck implements IDeck {
 
     private ICard createSpecialCard(String type, String color) {
         switch (type) {
-            case "skip":
+            case "skip" -> {
                 return new SkipCard(new BasicCard(color, "skip"));
-            case "reverse":
+            }
+            case "reverse" -> {
                 return new ReverseCard(new BasicCard(color, "reverse"));
-            case "take2":
-                return new Draw2Card(new BasicCard(color, "take2"));
-            default:
-                throw new IllegalArgumentException("Unknown special card type: " + type);
+            }
+            case "draw2" -> {
+                return new Draw2Card(new BasicCard(color, "draw2"));
+            }
+            default -> throw new IllegalArgumentException("Unknown special card type: " + type);
         }
     }
 

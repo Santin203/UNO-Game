@@ -169,7 +169,19 @@ public class Game implements IGame {
 
     @Override
     public void increasePlayerIndex() {
-        this.playerIndex = players.size()%(this.playerIndex + order);
+        this.playerIndex = this.playerIndex + order;
+        if (playerIndex == players.size()) 
+        {
+            //Jump back to first player
+            //Game is going from i to i + 1
+            playerIndex = 0;
+        }
+        if (playerIndex < 0)
+        {
+            //Jump to last player in list
+            //Game is going from i to i - 1
+            playerIndex = players.size() - 1;
+        }
     }
 
     @Override
@@ -182,4 +194,8 @@ public class Game implements IGame {
         return playerIndex;
     }
 
+    @Override 
+    public void revertOrder() {
+        order = order * -1;
+    }
 }

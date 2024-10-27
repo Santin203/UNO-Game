@@ -6,6 +6,7 @@ public interface IGame {
     void nextTurn();
     IDeck getDeck(String deck);
     void increasePlayerIndex();
-    public ArrayList<IPlayer> getPlayers();
-    public int getPlayerIndex();
+    ArrayList<IPlayer> getPlayers();
+    int getPlayerIndex();
+    void revertOrder();
 }

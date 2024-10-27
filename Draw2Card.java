@@ -19,11 +19,6 @@ public class Draw2Card extends CardDecorator {
     }
 
     @Override
-    public String getColor() {
-        return super.getColor();
-    }
-
-    @Override
     public String getValue() {
         // Value of the card is "draw2" or similar identifier
         return "draw2";
@@ -33,15 +28,15 @@ public class Draw2Card extends CardDecorator {
         // Logic to force the next player to draw 2 cards
         System.out.println("The next player must draw 2 cards.");
         ArrayList<IPlayer> gamePlayers = game.getPlayers();
-
+       
+        //Set nextPlayer to upcoming player
+        //Will skip next player when current player's turn ends
+        game.increasePlayerIndex();
         IPlayer nextPlayer = gamePlayers.get(game.getPlayerIndex());
 
         //Draw two cards from game pile
         nextPlayer.drawCard(game.getDeck("game").giveCard());
         nextPlayer.drawCard(game.getDeck("game").giveCard());
-
-        game.increasePlayerIndex();
-        // You can add more logic to handle the actual drawing of cards in your game
     }
 }
 
