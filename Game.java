@@ -7,13 +7,13 @@ public class Game implements IGame {
     private IDeck gamePile;
     private IPlayer currentPlayer;
     private IPlayer previousPlayer;
-    private String currentColor;
-    private String currentNumber;
+    private int playerIndex;
     private int order;
 
     public Game(ArrayList<IPlayer> players) {
         this.players = players;
         this.discardPile = Deck.buildDeck(0);
+        this.playerIndex = 0;
         this.order = 1;
     }
 
@@ -33,14 +33,9 @@ public class Game implements IGame {
                 player.drawCard(gamePile.giveCard());
             }
         }
-        int playerIndex = 0;
 
         //Get initial card
         discardPile.addCard(gamePile.giveCard());
-        
-        //Set initial color and numbers for the game
-        currentColor = discardPile.getTopCard().getColor();
-        currentNumber = discardPile.getTopCard().getValue();
 
         //Game loop
         while(true)
@@ -54,7 +49,7 @@ public class Game implements IGame {
                 break;
             }
             previousPlayer = currentPlayer;
-            playerIndex = players.size()%(playerIndex + order);
+            increasePlayerIndex();
         }
     }
 
@@ -164,16 +159,27 @@ public class Game implements IGame {
     }
 
     @Override
-    public IDeck getDeck(String deck){
-        switch(deck)
-        {
-            case "discard":
-                return gamePile;
-            case "game":
-                return discardPile;
-            default:
-                return discardPile;
-        }
+    public IDeck getDeck(String deck) {
+        return switch (deck) {
+            case "discard" -> gamePile;
+            case "game" -> discardPile;
+            default -> discardPile;
+        };
+    }
+
+    @Override
+    public void increasePlayerIndex() {
+        this.playerIndex = players.size()%(this.playerIndex + order);
+    }
+
+    @Override
+    public ArrayList<IPlayer> getPlayers() {
+        return players;
+    }
+
+    @Override
+    public int getPlayerIndex() {
+        return playerIndex;
     }
 
 }
