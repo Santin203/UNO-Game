@@ -1,5 +1,8 @@
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 public class ClientGUI {
     public JFrame frame;
@@ -16,29 +19,61 @@ public class ClientGUI {
     // Initialize the GUI components
     private void initializeGUI() {
         // Create the main window
-        frame = new JFrame("UNO Client");
+        JFrame frame = new JFrame("UNO Client");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(900, 600);
         frame.setLayout(new BorderLayout());
 
-        JPanel mainPanel = new JPanel(new GridLayout(1,2));
+        // Create button panel for the bottom of handPanel
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(new Color(24, 24, 24));
+        buttonPanel.setPreferredSize(new Dimension(300, 100));
 
-        //Create Panel for player's handPanel
-        JPanel handPanel = new JPanel();
-        handPanel.setBackground(new Color(191,11,17));
-        handPanel.setPreferredSize(new Dimension(300,600));
+        // Create panel for player's hand, containing buttonPanel
+        JPanel handPanel = new JPanel(new BorderLayout());
+        handPanel.setBackground(new Color(191, 11, 17));
+        handPanel.add(buttonPanel, BorderLayout.SOUTH); // Place buttonPanel at the bottom
 
-        //Create Panel for other players, game pile and discard pile
-        JPanel gamePanel = new JPanel();
-        gamePanel.setBackground(new Color(123,8,12));
-        gamePanel.setPreferredSize(new Dimension(600,600));
-
-        //Create Button to Call Uno
+        // Create Button to Call Uno
         JButton unoButton = new JButton("UNO!");
+        // Format unoButton
+        unoButton.setBackground(new Color(191, 11, 17));
+        unoButton.setForeground(Color.BLACK);
+        unoButton.setPreferredSize(new Dimension(60, 30));
+        unoButton.setFocusable(false);
+        Border border = BorderFactory.createLineBorder(Color.BLACK, 2); // Line border with width 2
+        unoButton.setBorder(border);
+        buttonPanel.add(unoButton);
 
-        handPanel.add(unoButton);
-        mainPanel.add(handPanel);
-        mainPanel.add(gamePanel);
+        // Create panel for other players, game pile, and discard pile
+        JPanel gamePanel = new JPanel();
+        gamePanel.setBackground(new Color(123, 8, 12));
+
+        // Use a JsplitPane to divide the handPanel and gamePanel with a proportional split
+        JSplitPane mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, handPanel, gamePanel);
+        mainPane.setResizeWeight(0.33); // Set initial proportion (33% for handPanel, 67% for gamePanel)
+        mainPane.setContinuousLayout(true); // Smooth resizing
+        mainPane.setBackground(new Color(0,0,0));
+        mainPane.setDividerSize(5);
+
+        // Customize the divider to change the slider color
+        mainPane.setUI(new BasicSplitPaneUI() {
+            @Override
+            public BasicSplitPaneDivider createDefaultDivider() {
+                return new BasicSplitPaneDivider(this) {
+                    @Override
+                    public void paint(Graphics g) {
+                        super.paint(g);
+                        // Set the divider background color
+                        g.setColor(Color.BLACK);
+                        g.fillRect(0, 0, getWidth(), getHeight());
+                    }
+                };
+            }
+        });
+
+        // Add the split pane to the main frame
+        frame.add(mainPane, BorderLayout.CENTER);
         /*
         // Create message area (for server updates)
         messageArea = new JTextArea();
@@ -56,8 +91,6 @@ public class ClientGUI {
         inputPanel.add(sendButton, BorderLayout.EAST);
         frame.add(inputPanel, BorderLayout.SOUTH);
         */
-        frame.add(mainPanel, BorderLayout.CENTER);
-        frame.pack();
         /*
         // Add an action listener to send messages when the button is pressed
         sendButton.addActionListener(new ActionListener() {
