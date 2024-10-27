@@ -78,7 +78,7 @@ public class Deck implements IDeck {
                 return new ReverseCard(new BasicCard(color, "reverse"));
             }
             case "draw2" -> {
-                return new Draw2Card(new BasicCard(color, "draw2"));
+                return new DrawKCard(new BasicCard(color, "draw2"));
             }
             default -> throw new IllegalArgumentException("Unknown special card type: " + type);
         }
@@ -88,7 +88,7 @@ public class Deck implements IDeck {
         for (int k = 0; k < 4; k++) {
             // Wild and WildTake4 cards don't have colors
             deckUnfilled.addCard(new ChangeColorCard(new BasicCard("", "wild"), ""));
-            deckUnfilled.addCard(new Draw4Card(new BasicCard("", "wildtake4")));
+            deckUnfilled.addCard(new DrawKCard(new ChangeColorCard(new BasicCard("", "wildtake4"), "")));
         }
     }
 
