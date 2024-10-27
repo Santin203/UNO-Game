@@ -1,7 +1,5 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.*;
 
 public class ClientGUI {
     public JFrame frame;
@@ -20,9 +18,28 @@ public class ClientGUI {
         // Create the main window
         frame = new JFrame("UNO Client");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
+        frame.setSize(900, 600);
         frame.setLayout(new BorderLayout());
 
+        JPanel mainPanel = new JPanel(new GridLayout(1,2));
+
+        //Create Panel for player's handPanel
+        JPanel handPanel = new JPanel();
+        handPanel.setBackground(new Color(191,11,17));
+        handPanel.setPreferredSize(new Dimension(300,600));
+
+        //Create Panel for other players, game pile and discard pile
+        JPanel gamePanel = new JPanel();
+        gamePanel.setBackground(new Color(123,8,12));
+        gamePanel.setPreferredSize(new Dimension(600,600));
+
+        //Create Button to Call Uno
+        JButton unoButton = new JButton("UNO!");
+
+        handPanel.add(unoButton);
+        mainPanel.add(handPanel);
+        mainPanel.add(gamePanel);
+        /*
         // Create message area (for server updates)
         messageArea = new JTextArea();
         messageArea.setEditable(false);
@@ -38,7 +55,10 @@ public class ClientGUI {
         inputPanel.add(inputField, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
         frame.add(inputPanel, BorderLayout.SOUTH);
-
+        */
+        frame.add(mainPanel, BorderLayout.CENTER);
+        frame.pack();
+        /*
         // Add an action listener to send messages when the button is pressed
         sendButton.addActionListener(new ActionListener() {
             @Override
@@ -50,7 +70,7 @@ public class ClientGUI {
                 }
             }
         });
-
+        */
         // Display the window
         frame.setVisible(true);
     }
