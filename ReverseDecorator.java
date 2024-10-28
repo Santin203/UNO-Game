@@ -2,7 +2,7 @@ public class ReverseDecorator extends BaseCard {
     private BaseCard baseCard;
 
     public ReverseDecorator(BaseCard baseCard) {
-        super(baseCard.getColor());
+        super();
         this.baseCard = baseCard;
     }
 

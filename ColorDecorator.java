@@ -3,7 +3,7 @@ public class ColorDecorator extends BaseCard {
     private String color;
 
     public ColorDecorator(BaseCard baseCard, String color) {
-        super(color);
+        super();
         this.baseCard = baseCard;
         this.color = color;
     }
@@ -15,7 +15,6 @@ public class ColorDecorator extends BaseCard {
         // Additional logic for changing color
     }
 
-    @Override
     public String getColor() {
         return color;  // Color is only defined here
     }

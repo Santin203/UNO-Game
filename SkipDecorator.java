@@ -2,7 +2,7 @@ public class SkipDecorator extends BaseCard {
     private BaseCard baseCard;
 
     public SkipDecorator(BaseCard baseCard) {
-        super(baseCard.getColor());
+        super();
     }
 
     @Override

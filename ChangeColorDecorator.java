@@ -3,23 +3,19 @@ public class ChangeColorDecorator extends BaseCard {
     private String colorToChange;
 
     public ChangeColorDecorator(BaseCard baseCard) {
-        super(baseCard.getColor());
+        super();
         this.baseCard = baseCard; // Assign baseCard here
     }
 
     public void changeColor(String newColor) {
         this.colorToChange = newColor;
-        
+
         // Cast baseCard to ColorDecorator to access setColor
         if (baseCard instanceof ColorDecorator) {
             ((ColorDecorator) baseCard).setColor(newColor);
         }
     }
 
-    @Override
-    public String getColor() {
-        return colorToChange != null ? colorToChange : baseCard.getColor();
-    }
 
     @Override
     public void play(IGame game) {

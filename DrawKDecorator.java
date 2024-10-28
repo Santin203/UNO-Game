@@ -5,7 +5,7 @@ public class DrawKDecorator extends BaseCard {
     private int drawCount;
 
     public DrawKDecorator(BaseCard baseCard, int drawCount) {
-        super(baseCard.getColor());
+        super();
         this.baseCard = baseCard;
         this.drawCount = drawCount;
     }
