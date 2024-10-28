@@ -53,10 +53,10 @@ public class Deck implements IDeck {
 
     private void createNumberCards(String color, IDeck deckUnfilled) {
         // Add number cards 0-9, 1-9 twice
-        deckUnfilled.addCard(new ColorDecorator(null, color));  // Card 0
+        deckUnfilled.addCard(new NumberDecorator(new ColorDecorator(null, color), "0"));  // Card 0
         for (int j = 1; j < 10; j++) {
-            deckUnfilled.addCard(new ColorDecorator(null, color));
-            deckUnfilled.addCard(new ColorDecorator(null, color));
+            deckUnfilled.addCard(new NumberDecorator(new ColorDecorator(null, color), String.valueOf(j)));
+            deckUnfilled.addCard(new NumberDecorator(new ColorDecorator(null, color), String.valueOf(j)));
         }
     }
 

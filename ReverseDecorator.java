@@ -11,5 +11,10 @@ public class ReverseDecorator extends BaseCard {
         baseCard.play(game);
         System.out.println("Reverse effect activated!");
         // Additional logic for reverse effect
+        applyReverseEffect(game);
+    }
+
+    private void applyReverseEffect(IGame game) {
+        game.revertOrder();
     }
 }
