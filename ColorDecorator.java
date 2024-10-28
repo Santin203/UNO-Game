@@ -15,4 +15,13 @@ public class ColorDecorator extends BaseCard {
         // Additional logic for changing color
     }
 
+    @Override
+    public String getColor() {
+        return color;  // Color is only defined here
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
 }

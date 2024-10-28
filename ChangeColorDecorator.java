@@ -4,12 +4,16 @@ public class ChangeColorDecorator extends BaseCard {
 
     public ChangeColorDecorator(BaseCard baseCard) {
         super(baseCard.getColor());
-
+        this.baseCard = baseCard; // Assign baseCard here
     }
 
     public void changeColor(String newColor) {
         this.colorToChange = newColor;
-        System.out.println("Color changed to: " + newColor);
+        
+        // Cast baseCard to ColorDecorator to access setColor
+        if (baseCard instanceof ColorDecorator) {
+            ((ColorDecorator) baseCard).setColor(newColor);
+        }
     }
 
     @Override

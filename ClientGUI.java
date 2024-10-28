@@ -19,7 +19,7 @@ public class ClientGUI {
     // Initialize the GUI components
     private void initializeGUI() {
         // Create the main window
-        JFrame frame = new JFrame("UNO Client");
+        frame = new JFrame("UNO Client");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(900, 600);
         frame.setLayout(new BorderLayout());
@@ -45,7 +45,6 @@ public class ClientGUI {
         unoButton.setBorder(border);
         //unoButton.setEnabled(false);      //Change buttons availability to faslse
         buttonPanel.add(unoButton);
-
 
         // Create panel for other players, game pile, and discard pile
         JPanel gamePanel = new JPanel();
@@ -108,6 +107,31 @@ public class ClientGUI {
         */
         // Display the window
         frame.setVisible(true);
+    }
+
+    // Method to show color selection dialog
+    public String showColorSelectionDialog() {
+        String[] colors = {"Red", "Green", "Blue", "Yellow"};
+        String selectedColor = (String) JOptionPane.showInputDialog(
+            frame,
+            "Choose a color:",
+            "Color Selection",
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            colors,
+            colors[0]
+        );
+
+        return selectedColor != null ? selectedColor.toLowerCase() : null;
+    }
+
+    // Method to trigger when a ChangeColor card is played
+    public void playChangeColorCard(ChangeColorDecorator card) {
+        String selectedColor = showColorSelectionDialog();
+        if (selectedColor != null) {
+            card.changeColor(selectedColor);
+            updateMessageArea("Color changed to: " + selectedColor);
+        }
     }
 
     // Update the message area with server updates
