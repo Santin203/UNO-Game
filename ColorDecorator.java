@@ -14,4 +14,5 @@ public class ColorDecorator extends BaseCard {
         System.out.println("Color changed to " + color);
         // Additional logic for changing color
     }
+
 }

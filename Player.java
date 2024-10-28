@@ -22,7 +22,7 @@ public class Player implements IPlayer {
     public boolean playCard(ICard card, IGame game) {
         // Logic to play a card
         card.play(game);
-        game.getDeck("discard").addCard(card);
+        game.getDiscardDeck().addCard(card);
         hand.remove(card);
         return true;
     }

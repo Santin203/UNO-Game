@@ -159,12 +159,13 @@ public class Game implements IGame {
     }
 
     @Override
-    public IDeck getDeck(String deck) {
-        return switch (deck) {
-            case "discard" -> gamePile;
-            case "game" -> discardPile;
-            default -> discardPile;
-        };
+    public IDeck getDiscardDeck() {
+        return discardPile;
+    }
+
+    @Override
+    public IDeck getGameDeck() {
+        return gamePile;
     }
 
     @Override

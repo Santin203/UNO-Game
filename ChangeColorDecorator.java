@@ -20,7 +20,13 @@ public class ChangeColorDecorator extends BaseCard {
     @Override
     public void play(IGame game) {
         //IMPLEMENT LOGIC
-        //baseCard.play(game);
+        baseCard.play(game);
         System.out.println("Color changed to " + colorToChange);
     }
+
+    @Override
+    public boolean canBePlayed(ICard topCard) {
+        return true; // Can be played on any card
+    }
+
 }
