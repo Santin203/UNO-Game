@@ -43,7 +43,9 @@ public class ClientGUI {
         unoButton.setFocusable(false);
         Border border = BorderFactory.createLineBorder(Color.BLACK, 2); // Line border with width 2
         unoButton.setBorder(border);
+        //unoButton.setEnabled(false);      //Change buttons availability to faslse
         buttonPanel.add(unoButton);
+
 
         // Create panel for other players, game pile, and discard pile
         JPanel gamePanel = new JPanel();
