@@ -53,10 +53,10 @@ public class Deck implements IDeck {
 
     private void createNumberCards(String color, IDeck deckUnfilled) {
         // Add number cards 0-9, 1-9 twice
-        deckUnfilled.addCard(new BasicCard(color, "0"));
+        deckUnfilled.addCard(new ColorDecorator(null, color));  // Card 0
         for (int j = 1; j < 10; j++) {
-            deckUnfilled.addCard(new BasicCard(color, String.valueOf(j)));
-            deckUnfilled.addCard(new BasicCard(color, String.valueOf(j)));
+            deckUnfilled.addCard(new ColorDecorator(null, color));
+            deckUnfilled.addCard(new ColorDecorator(null, color));
         }
     }
 
@@ -70,25 +70,25 @@ public class Deck implements IDeck {
     }
 
     private ICard createSpecialCard(String type, String color) {
+        BaseCard baseCard = new ColorDecorator(null, color);  // Creates a basic colored card
+
         switch (type) {
-            case "skip" -> {
-                return new SkipCard(new BasicCard(color, "skip"));
-            }
-            case "reverse" -> {
-                return new ReverseCard(new BasicCard(color, "reverse"));
-            }
-            case "draw2" -> {
-                return new DrawKCard(new BasicCard(color, "draw2"));
-            }
-            default -> throw new IllegalArgumentException("Unknown special card type: " + type);
+            case "skip":
+                return new SkipDecorator(baseCard);
+            case "reverse":
+                return new ReverseDecorator(baseCard);
+            case "draw2":
+                return new DrawKDecorator(baseCard, 2);  // Assuming DrawKDecorator with 2 cards
+            default:
+                throw new IllegalArgumentException("Unknown special card type: " + type);
         }
     }
 
     private void createWildCards(IDeck deckUnfilled) {
         for (int k = 0; k < 4; k++) {
-            // Wild and WildTake4 cards don't have colors
-            deckUnfilled.addCard(new ChangeColorCard(new BasicCard("", "wild"), ""));
-            deckUnfilled.addCard(new DrawKCard(new ChangeColorCard(new BasicCard("", "wildtake4"), "")));
+            // Add ChangeColor and Draw 4 cards with no initial color
+            deckUnfilled.addCard(new ColorDecorator(null, "Black"));
+            deckUnfilled.addCard(new DrawKDecorator(new ColorDecorator(null, "Black"), 4));  // Wild Draw 4
         }
     }
 
