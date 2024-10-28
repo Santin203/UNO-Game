@@ -136,6 +136,11 @@ public class ClientGUI {
 
     // Update the message area with server updates
     public void updateMessageArea(String message) {
+        if (messageArea == null) {
+            messageArea = new JTextArea();
+            messageArea.setEditable(false);
+            frame.add(new JScrollPane(messageArea), BorderLayout.CENTER); // Add scrollable message area
+        }
         messageArea.append("Update from server: " + message + "\n");
         messageArea.setCaretPosition(messageArea.getDocument().getLength()); // Auto-scroll to bottom
     }
