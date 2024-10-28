@@ -87,8 +87,10 @@ public class Deck implements IDeck {
     private void createWildCards(IDeck deckUnfilled) {
         for (int k = 0; k < 4; k++) {
             // Add ChangeColor and Draw 4 cards with no initial color
-            deckUnfilled.addCard(new ColorDecorator(null, "Black"));
-            deckUnfilled.addCard(new DrawKDecorator(new ColorDecorator(null, "Black"), 4));  // Wild Draw 4
+            deckUnfilled.addCard(new ChangeColorDecorator(new ColorDecorator(null, "Black")));
+            deckUnfilled.addCard(new DrawKDecorator(new ChangeColorDecorator(new ColorDecorator(null, "Black")), 4));
+
+            
         }
     }
 
