@@ -1,5 +1,5 @@
 public class NumberDecorator extends BaseCard {
-    private BaseCard baseCard;
+    protected BaseCard baseCard;
     private String number;
 
     public NumberDecorator(BaseCard baseCard, String number) {
@@ -23,4 +23,7 @@ public class NumberDecorator extends BaseCard {
         return baseCard.canBePlayed(topCard) || (topCard instanceof NumberDecorator && this.getNumber().equals(((NumberDecorator) topCard).getNumber()));
     }
     
+    public BaseCard getWrappedCard() {
+        return baseCard;
+    }
 }

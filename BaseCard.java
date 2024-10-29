@@ -6,9 +6,9 @@ public abstract class BaseCard implements ICard {
 
     public abstract void play(IGame game);
 
-    @Override
-    public boolean canBePlayed(ICard topCard) {
-        return ((ColorDecorator) this).getColor().equals(((ColorDecorator) topCard).getColor());
-    }
-
+    // @Override
+    // public boolean canBePlayed(ICard topCard) {
+    //     String topCardColor = ((ColorDecorator) topCard).getColor();
+    //     return ((ColorDecorator) this).getColor().equals(topCardColor);
+    // }
 }

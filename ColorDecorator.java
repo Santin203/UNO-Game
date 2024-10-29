@@ -23,4 +23,9 @@ public class ColorDecorator extends BaseCard {
         this.color = color;
     }
 
+    @Override
+    public boolean canBePlayed(ICard topCard) {
+        return (topCard instanceof ColorDecorator && this.getColor().equals(((ColorDecorator) topCard).getColor())); //FIX
+    }
+
 }

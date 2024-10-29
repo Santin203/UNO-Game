@@ -38,16 +38,14 @@ public class Deck implements IDeck {
         String[] colorList = {"blue", "red", "yellow", "green"};
         String[] specialTypeList = {"skip", "reverse", "draw2"};
 
-        if (decksN > 0) {
-            for (int i = 0; i < decksN; i++) {
-                // Create number cards and special cards for each color
-                for (String color : colorList) {
-                    createNumberCards(color, deckUnfilled);
-                    createSpecialCards(color, specialTypeList, deckUnfilled);
-                }
-                // Add wild cards and wild take 4 cards (no color)
-                createWildCards(deckUnfilled);
+        for (int i = 0; i < decksN; i++) {
+            // Create number cards and special cards for each color
+            for (String color : colorList) {
+                createNumberCards(color, deckUnfilled);
+                createSpecialCards(color, specialTypeList, deckUnfilled);
             }
+            // Add wild cards and wild take 4 cards
+            createWildCards(deckUnfilled);
         }
     }
 
