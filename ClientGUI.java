@@ -89,7 +89,6 @@ public class ClientGUI {
         //unoButton.setEnabled(false);      //Change buttons availability to faslse
         buttonPanel.add(unoButton);
 
-
         // Create panel for other players, game pile, and discard pile
         JPanel gamePanel = new JPanel();
         gamePanel.setBackground(new Color(123, 8, 12));
@@ -153,8 +152,38 @@ public class ClientGUI {
         frame.setVisible(true);
     }
 
+    // Method to show color selection dialog
+    public String showColorSelectionDialog() {
+        String[] colors = {"Red", "Green", "Blue", "Yellow"};
+        String selectedColor = (String) JOptionPane.showInputDialog(
+            frame,
+            "Choose a color:",
+            "Color Selection",
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            colors,
+            colors[0]
+        );
+
+        return selectedColor != null ? selectedColor.toLowerCase() : null;
+    }
+
+    // Method to trigger when a ChangeColor card is played
+    public void playChangeColorCard(ChangeColorDecorator card) {
+        String selectedColor = showColorSelectionDialog();
+        if (selectedColor != null) {
+            card.changeColor(selectedColor);
+            updateMessageArea("Color changed to: " + selectedColor);
+        }
+    }
+
     // Update the message area with server updates
     public void updateMessageArea(String message) {
+        if (messageArea == null) {
+            messageArea = new JTextArea();
+            messageArea.setEditable(false);
+            frame.add(new JScrollPane(messageArea), BorderLayout.CENTER); // Add scrollable message area
+        }
         messageArea.append("Update from server: " + message + "\n");
         messageArea.setCaretPosition(messageArea.getDocument().getLength()); // Auto-scroll to bottom
     }

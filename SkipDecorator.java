@@ -2,7 +2,7 @@ public class SkipDecorator extends BaseCard {
     private BaseCard baseCard;
 
     public SkipDecorator(BaseCard baseCard) {
-        super(baseCard.getColor());
+        super();
     }
 
     @Override
@@ -16,5 +16,10 @@ public class SkipDecorator extends BaseCard {
 
     private void applySkipEffect(IGame game) {
         game.increasePlayerIndex();
+    }
+
+    @Override
+    public boolean canBePlayed(ICard topCard) {
+        return baseCard.canBePlayed(topCard) || topCard instanceof SkipDecorator; // Same color or skip card
     }
 }

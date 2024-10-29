@@ -5,7 +5,7 @@ public class DrawKDecorator extends BaseCard {
     private int drawCount;
 
     public DrawKDecorator(BaseCard baseCard, int drawCount) {
-        super(baseCard.getColor());
+        super();
         this.baseCard = baseCard;
         this.drawCount = drawCount;
     }
@@ -33,7 +33,12 @@ public class DrawKDecorator extends BaseCard {
 
         //Draw K cards from game pile
         for (int i = 0; i < drawCount; i++) {
-            nextPlayer.drawCard(game.getDeck("game").giveCard());
+            nextPlayer.drawCard(game.getGameDeck().giveCard());
         }
+    }
+
+    @Override
+    public boolean canBePlayed(ICard topCard) {
+        return true;
     }
 }

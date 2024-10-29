@@ -4,7 +4,8 @@ public interface IGame {
     void startGame();
     void checkWinner();
     void nextTurn();
-    IDeck getDeck(String deck);
+    IDeck getDiscardDeck();
+    IDeck getGameDeck();
     void increasePlayerIndex();
     ArrayList<IPlayer> getPlayers();
     int getPlayerIndex();

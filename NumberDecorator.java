@@ -3,7 +3,7 @@ public class NumberDecorator extends BaseCard {
     private String number;
 
     public NumberDecorator(BaseCard baseCard, String number) {
-        super(baseCard.getColor());
+        super();
         this.baseCard = baseCard;
         this.number = number;
     }
@@ -20,8 +20,7 @@ public class NumberDecorator extends BaseCard {
 
     @Override
     public boolean canBePlayed(ICard topCard) {
-        return this.getColor().equals(topCard.getColor()) || 
-               (topCard instanceof NumberDecorator && this.getNumber() == ((NumberDecorator) topCard).getNumber());
+        return baseCard.canBePlayed(topCard) || (topCard instanceof NumberDecorator && this.getNumber().equals(((NumberDecorator) topCard).getNumber()));
     }
     
 }
