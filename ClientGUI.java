@@ -1,4 +1,8 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
@@ -19,7 +23,7 @@ public class ClientGUI {
     // Initialize the GUI components
     private void initializeGUI() {
         // Create the main window
-        JFrame frame = new JFrame("UNO Client");
+        frame = new JFrame("UNO Client");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(900, 600);
         frame.setLayout(new BorderLayout());
@@ -29,10 +33,49 @@ public class ClientGUI {
         buttonPanel.setBackground(new Color(24, 24, 24));
         buttonPanel.setPreferredSize(new Dimension(300, 100));
 
+        // Load the image and get a section of it for the buttons
+        BufferedImage originalImage = null;
+        try {
+            originalImage = ImageIO.read(new File("UNO_Cards.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "Image file not found: UNO_Cards.png", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        //Create Grid panel for player's hand
+        JPanel cardsPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(2, 2, 2, 2); // Spacing between cells
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 1.0; // Allow panel to grow horizontally
+
+        int buttonWidth = 64;
+        int buttonHeight = 96;
+
+        for (int i = 1; i <= 80; i++) {
+            BufferedImage buttonImage = originalImage.getSubimage(0, 0, 32, 48);
+            ImageIcon buttonIcon = new ImageIcon(buttonImage.getScaledInstance(32, 48, Image.SCALE_SMOOTH));
+
+            JButton button = new JButton(buttonIcon);
+            button.setPreferredSize(new Dimension(buttonWidth, buttonHeight)); // Fixed size
+
+           // Calculate column and row based on buttonCount
+           gbc.gridx = i % 3; // Column index
+           gbc.gridy = i / 3; // Row index
+           cardsPanel.add(button, gbc);
+        }
+
+        //Create Scrollable panel for storing cards
+        JScrollPane cardsScrollPane = new JScrollPane(cardsPanel);
+        cardsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        cardsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        cardsScrollPane.setPreferredSize(new Dimension(200, cardsScrollPane.getPreferredSize().height));
+
         // Create panel for player's hand, containing buttonPanel
         JPanel handPanel = new JPanel(new BorderLayout());
         handPanel.setBackground(new Color(191, 11, 17));
         handPanel.add(buttonPanel, BorderLayout.SOUTH); // Place buttonPanel at the bottom
+        handPanel.add(cardsScrollPane);
 
         // Create Button to Call Uno
         JButton unoButton = new JButton("UNO!");
