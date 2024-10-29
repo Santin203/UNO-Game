@@ -6,12 +6,14 @@ import java.util.List;
 // Singleton Server class
 public class Server implements Observable {
     private static Server instance = null;  // Singleton instance
-    private List<IPlayer> players = new ArrayList<>();
+    private ArrayList<IPlayer> players = new ArrayList<>();
+    private IGame game;
     private ServerSocket serverSocket;
     private List<Observer> observers = new ArrayList<>(); // List of observers (clients)
 
     // Private constructor (Singleton)
     private Server(int port) throws IOException {
+        game = new Game(players);
         serverSocket = new ServerSocket(port);
         System.out.println("UNO Server started on port " + port);
     }

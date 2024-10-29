@@ -27,37 +27,40 @@ public class ClientGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(900, 600);
         frame.setLayout(new BorderLayout());
-
-        // Create button panel for the bottom of handPanel
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(new Color(24, 24, 24));
-        buttonPanel.setPreferredSize(new Dimension(300, 100));
-
-        // Load the image and get a section of it for the buttons
-        BufferedImage originalImage = null;
+        // Load the image and get a section of it for the cards and Icon
+        BufferedImage spriteSheet = null;
         try {
-            originalImage = ImageIO.read(new File("UNO_Cards.png"));
+            spriteSheet = ImageIO.read(new File("UNO_Cards.png"));
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(frame, "Image file not found: UNO_Cards.png", "Error", JOptionPane.ERROR_MESSAGE);
         }
+        int cardWidth = 64;
+        int cardHeight = 96;
+
+        BufferedImage iconImage = spriteSheet.getSubimage(320, 192, 32, 48);
+        frame.setIconImage(iconImage);
+
+        // Create button panel for the bottom of handPanel
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(new Color(0, 0, 0));
+        buttonPanel.setPreferredSize(new Dimension(300, 100));
 
         //Create Grid panel for player's hand
         JPanel cardsPanel = new JPanel(new GridBagLayout());
+        cardsPanel.setBackground(new Color(24,24,24));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(2, 2, 2, 2); // Spacing between cells
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 1.0; // Allow panel to grow horizontally
 
-        int buttonWidth = 64;
-        int buttonHeight = 96;
-
         for (int i = 1; i <= 80; i++) {
-            BufferedImage buttonImage = originalImage.getSubimage(0, 0, 32, 48);
+            BufferedImage buttonImage = spriteSheet.getSubimage(0, 0, 32, 48);
             ImageIcon buttonIcon = new ImageIcon(buttonImage.getScaledInstance(32, 48, Image.SCALE_SMOOTH));
 
             JButton button = new JButton(buttonIcon);
-            button.setPreferredSize(new Dimension(buttonWidth, buttonHeight)); // Fixed size
+            button.setPreferredSize(new Dimension(cardWidth, cardHeight)); // Fixed size
+            button.setBackground(new Color(0, 0, 0));
 
            // Calculate column and row based on buttonCount
            gbc.gridx = i % 3; // Column index
@@ -70,6 +73,7 @@ public class ClientGUI {
         cardsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         cardsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         cardsScrollPane.setPreferredSize(new Dimension(200, cardsScrollPane.getPreferredSize().height));
+        cardsScrollPane.setBackground(new Color(0, 0, 0));
 
         // Create panel for player's hand, containing buttonPanel
         JPanel handPanel = new JPanel(new BorderLayout());
@@ -186,5 +190,14 @@ public class ClientGUI {
         }
         messageArea.append("Update from server: " + message + "\n");
         messageArea.setCaretPosition(messageArea.getDocument().getLength()); // Auto-scroll to bottom
+    }
+
+    public int getCardYCoordinates(ICard card) {
+        return 0;
+    }
+
+    public int getCardXCoordinates(ICard card) {
+        return 0;
+
     }
 }
