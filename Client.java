@@ -1,14 +1,17 @@
 import java.io.*;
 import java.net.*;
+import java.util.Random;
 
 public class Client implements Observer {
     private Socket socket;
     private ObjectInputStream input;
     private ObjectOutputStream output;
+    private IPlayer currentPlayer;
     private ClientGUI gui;
 
-    public Client(String address, int port, ClientGUI gui) {
+    public Client(String address, int port, ClientGUI gui, IPlayer player) {
         this.gui = gui;  // Reference to the GUI
+        this.currentPlayer = player;
         try {
             socket = new Socket(address, port);
             output = new ObjectOutputStream(socket.getOutputStream());
@@ -52,8 +55,33 @@ public class Client implements Observer {
     }
 
     public static void main(String[] args) {
+
+        //Get unique ID for player and create new Player instance
+        String userID = generateUserId();
+        IPlayer player = new Player(userID);
+
         ClientGUI gui = new ClientGUI(null);  // Create GUI without client first
-        Client client = new Client("localhost", 12345, gui);  // Pass GUI to client
+        Client client = new Client("localhost", 12345, gui, player);  // Pass GUI and Player to client
+
         gui.client = client;  // Link client to the GUI
+    }
+
+    public static String generateUserId() {
+        Random random = new Random();
+        // Generates a random integer between 0 and 999
+        int userID1 = random.nextInt(1000);
+        int userID2 = random.nextInt(1000);
+        int userID3 = random.nextInt(1000);
+
+        String userID1Text = String.valueOf(userID1);
+        String userID2Text = String.valueOf(userID2);
+        String userID3Text = String.valueOf(userID3);
+
+        String userID = String.join("",userID1Text,userID2Text,userID3Text);
+        return userID;
+    }
+
+    public IPlayer getPlayer() {
+        return currentPlayer;
     }
 }
