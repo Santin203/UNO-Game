@@ -21,11 +21,10 @@ public class Game implements IGame {
     public void startGame() {
         // Logic to start the game
 
-        double decksN = players.size()/10;
+        double decksN = (players.size() + 9 ) /10;
         gamePile = Deck.buildDeck((int)decksN);
-        gamePile.shuffleCards();
 
-        for(int i = 0; i < 8; i++)
+        for(int i = 0; i < 7; i++)
         {
             //Deal cards to players, 7 each
             for (IPlayer player : players)
@@ -34,8 +33,17 @@ public class Game implements IGame {
             }
         }
 
-        //Get initial card
-        discardPile.addCard(gamePile.giveCard());
+        //Get initial card, can't be a special card
+        ICard topCard = gamePile.giveCard();
+        while(topCard instanceof ChangeColorDecorator || topCard instanceof DrawKDecorator ||
+         topCard instanceof ReverseDecorator || topCard instanceof SkipDecorator)
+        {
+            gamePile.addCard(topCard);
+            gamePile.shuffleCards();
+            topCard = gamePile.giveCard();
+        }
+        discardPile.addCard(topCard);
+        
 
         //Game loop
         while(true)

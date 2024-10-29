@@ -3,6 +3,7 @@ public class SkipDecorator extends BaseCard {
 
     public SkipDecorator(BaseCard baseCard) {
         super();
+        this.baseCard = baseCard;
     }
 
     @Override
@@ -21,5 +22,9 @@ public class SkipDecorator extends BaseCard {
     @Override
     public boolean canBePlayed(ICard topCard) {
         return baseCard.canBePlayed(topCard) || topCard instanceof SkipDecorator; // Same color or skip card
+    }
+
+    public BaseCard getWrappedCard() {
+        return baseCard;
     }
 }

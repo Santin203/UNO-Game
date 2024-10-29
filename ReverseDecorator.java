@@ -22,4 +22,8 @@ public class ReverseDecorator extends BaseCard {
     public boolean canBePlayed(ICard topCard) {
         return baseCard.canBePlayed(topCard) || topCard instanceof ReverseDecorator; // Same color or reverse card
     }
+
+    public BaseCard getWrappedCard() {
+        return baseCard;
+    }
 }

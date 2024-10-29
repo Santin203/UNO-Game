@@ -41,4 +41,8 @@ public class DrawKDecorator extends BaseCard {
     public boolean canBePlayed(ICard topCard) {
         return true;
     }
+
+    public BaseCard getWrappedCard() {
+        return baseCard;
+    }
 }
