@@ -1,8 +1,10 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class Player implements IPlayer {
+public class Player implements IPlayer, Serializable {
+    private static final long serialVersionUID = 1L;
     private String name;
     private ArrayList<ICard> hand;
     private int status;

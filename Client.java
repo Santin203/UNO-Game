@@ -25,7 +25,7 @@ public class Client implements Observer {
         }
     }
 
-    public void sendToServer(String message) {
+    public void sendToServer(Object message) {
         try {
             output.writeObject(message);
             output.flush();
@@ -80,7 +80,6 @@ public class Client implements Observer {
         String userID = String.join("",userID1Text,userID2Text,userID3Text);
         return userID;
     }
-
     public IPlayer getPlayer() {
         return currentPlayer;
     }

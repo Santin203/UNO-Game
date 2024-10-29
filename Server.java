@@ -13,7 +13,6 @@ public class Server implements Observable {
 
     // Private constructor (Singleton)
     private Server(int port) throws IOException {
-        game = new Game(players);
         serverSocket = new ServerSocket(port);
         System.out.println("UNO Server started on port " + port);
     }
@@ -81,11 +80,42 @@ public class Server implements Observable {
         
                 // Handle game logic, such as receiving cards, moves, etc.
                 while (true) {
-                    String message = (String) input.readObject();  // Receive from client
-                    System.out.println("Received from client: " + message);
-                    
-                    // Notify all clients about the received message (e.g., player's move)
-                    notifyObservers(message);
+                    //Read object from client
+                    Object clientMessage = input.readObject();
+                    //If object is a string
+                    if (clientMessage instanceof String) {
+                        //Deserialize
+                        String message = (String) clientMessage;
+                        System.out.println("Received string from client: " + message);
+                        notifyObservers(message);
+                    //If object is client's currentPlayer
+                    } else if (clientMessage instanceof IPlayer) {
+                        //Deserialize
+                        IPlayer clientPlayer = (Player) clientMessage;
+                        System.out.println("Received player from client: " + clientPlayer.getName());
+
+                        int playerIndex = -1;
+                        //Search for player in player list
+                        for (IPlayer playerInList : players) {
+                            //Replace current instance if already in List
+                            if(player.getName().equals(clientPlayer.getName()))
+                            {
+                                playerIndex = players.indexOf(playerInList);
+                                break;
+                            }
+                        }
+                        //If not found in list
+                        if(playerIndex == -1)
+                        {
+                            //Add at the end
+                            players.add((players.size() -1), clientPlayer);
+                        }
+                        else
+                        {
+                            //Add at found index
+                            players.add(playerIndex, clientPlayer);
+                        }
+                    }
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
