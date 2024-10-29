@@ -23,7 +23,9 @@ public class NumberDecorator extends BaseCard {
         return baseCard.canBePlayed(topCard) || (topCard instanceof NumberDecorator && this.getNumber().equals(((NumberDecorator) topCard).getNumber()));
     }
     
-    public BaseCard getWrappedCard() {
-        return baseCard;
+    @Override
+    public String getColor() {
+        // Traverse to base decorator (ColorDecorator)
+        return baseCard.getColor();
     }
 }
