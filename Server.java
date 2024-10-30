@@ -143,7 +143,7 @@ public class Server implements Observable {
         }
 
         @Override
-        public void update(String message) {
+        public void update(Object message) {
             try {
                 output.writeObject(message);  // Send message to client
                 output.flush();
@@ -172,5 +172,5 @@ interface Observable {
 
 // Observer interface
 interface Observer {
-    void update(String message);
+    void update(Object message);
 }

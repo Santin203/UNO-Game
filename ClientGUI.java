@@ -10,6 +10,7 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 public class ClientGUI {
     public JFrame frame;
+    private IPlayer clientPlayer;
     private JTextArea messageArea;
     private JTextField inputField;
     private JButton sendButton;
@@ -23,36 +24,82 @@ public class ClientGUI {
     // Initialize the GUI components
     private void initializeGUI() {
         // Create the main window
+        createFrame();
+
+        // Create button panel for the bottom of handPanel
+        JPanel buttonPanel = createButtonPanel();
+
+        //Create Grid panel for player's hand
+        JPanel cardsPanel = createCardsPanel();
+
+        //Create Scrollable panel for storing cards
+        JScrollPane cardsScrollPane = createScrollablePane(cardsPanel);
+
+        // Create panel for player's hand, containing buttonPanel
+        JPanel handPanel = createHandPanel(buttonPanel, cardsScrollPane);
+
+        // Create Button to Call Uno
+        JButton unoButton = createUnoButton();
+        //unoButton.setEnabled(false);      //Change buttons availability to faslse
+        buttonPanel.add(unoButton);
+
+        // Create panel for other players, game pile, and discard pile
+        JPanel gamePanel = createGamePanel();
+
+        // Use a JsplitPane to divide the handPanel and gamePanel with a proportional split
+        JSplitPane mainPane = createMainPane(handPanel, gamePanel);
+
+        // Add the split pane to the main frame
+        frame.add(mainPane, BorderLayout.CENTER);
+        // Display the window
+        frame.setVisible(true);
+    }
+
+    private void createFrame() {
         frame = new JFrame("UNO Client");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(900, 600);
         frame.setLayout(new BorderLayout());
         // Load the image and get a section of it for the cards and Icon
-        BufferedImage spriteSheet = null;
-        try {
-            spriteSheet = ImageIO.read(new File("UNO_Cards.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(frame, "Image file not found: UNO_Cards.png", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        int cardWidth = 64;
-        int cardHeight = 96;
+        BufferedImage spriteSheet = openImage("UNO_Cards.png");
 
         BufferedImage iconImage = spriteSheet.getSubimage(320, 192, 32, 48);
         frame.setIconImage(iconImage);
+    }
 
-        // Create button panel for the bottom of handPanel
+    private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBackground(new Color(0, 0, 0));
         buttonPanel.setPreferredSize(new Dimension(300, 100));
+        return buttonPanel;
+    }
 
-        //Create Grid panel for player's hand
+    private BufferedImage openImage(String Path) {
+        BufferedImage spriteSheet = null;
+        try {
+            spriteSheet = ImageIO.read(new File(Path));
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "Image file not found: " + Path, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+       
+        BufferedImage iconImage = spriteSheet.getSubimage(320, 192, 32, 48);
+        frame.setIconImage(iconImage);
+        return spriteSheet;
+    }
+
+    private JPanel createCardsPanel() {
+        int cardWidth = 64;
+        int cardHeight = 96;
+
         JPanel cardsPanel = new JPanel(new GridBagLayout());
         cardsPanel.setBackground(new Color(24,24,24));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(2, 2, 2, 2); // Spacing between cells
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 1.0; // Allow panel to grow horizontally
+
+        BufferedImage spriteSheet = openImage("UNO_Cards.png");
 
         for (int i = 1; i <= 80; i++) {
             BufferedImage buttonImage = spriteSheet.getSubimage(0, 0, 32, 48);
@@ -67,21 +114,27 @@ public class ClientGUI {
            gbc.gridy = i / 3; // Row index
            cardsPanel.add(button, gbc);
         }
+        return cardsPanel;
+    }
 
-        //Create Scrollable panel for storing cards
-        JScrollPane cardsScrollPane = new JScrollPane(cardsPanel);
+    private JScrollPane createScrollablePane(JPanel panel) {
+        JScrollPane cardsScrollPane = new JScrollPane(panel);
         cardsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         cardsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         cardsScrollPane.setPreferredSize(new Dimension(200, cardsScrollPane.getPreferredSize().height));
         cardsScrollPane.setBackground(new Color(0, 0, 0));
+        return cardsScrollPane;
+    }
 
-        // Create panel for player's hand, containing buttonPanel
+    private JPanel createHandPanel(JPanel buttonPanel, JScrollPane cardsScrollPane) {
         JPanel handPanel = new JPanel(new BorderLayout());
         handPanel.setBackground(new Color(191, 11, 17));
         handPanel.add(buttonPanel, BorderLayout.SOUTH); // Place buttonPanel at the bottom
         handPanel.add(cardsScrollPane);
+        return handPanel;
+    }
 
-        // Create Button to Call Uno
+    private JButton createUnoButton() {
         JButton unoButton = new JButton("UNO!");
         // Format unoButton
         unoButton.setBackground(new Color(191, 11, 17));
@@ -91,13 +144,16 @@ public class ClientGUI {
         Border border = BorderFactory.createLineBorder(Color.BLACK, 2); // Line border with width 2
         unoButton.setBorder(border);
         //unoButton.setEnabled(false);      //Change buttons availability to faslse
-        buttonPanel.add(unoButton);
+        return unoButton;
+    }
 
-        // Create panel for other players, game pile, and discard pile
+    private JPanel createGamePanel() {
         JPanel gamePanel = new JPanel();
         gamePanel.setBackground(new Color(123, 8, 12));
+        return gamePanel;
+    }
 
-        // Use a JsplitPane to divide the handPanel and gamePanel with a proportional split
+    private JSplitPane createMainPane(JPanel handPanel, JPanel gamePanel) {
         JSplitPane mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, handPanel, gamePanel);
         mainPane.setResizeWeight(0.33); // Set initial proportion (33% for handPanel, 67% for gamePanel)
         mainPane.setContinuousLayout(true); // Smooth resizing
@@ -119,12 +175,9 @@ public class ClientGUI {
                 };
             }
         });
-
-        // Add the split pane to the main frame
-        frame.add(mainPane, BorderLayout.CENTER);
-        // Display the window
-        frame.setVisible(true);
+        return mainPane;
     }
+    
 
     // Method to show color selection dialog
     public String showColorSelectionDialog() {
@@ -160,6 +213,10 @@ public class ClientGUI {
         }
         messageArea.append("Update from server: " + message + "\n");
         messageArea.setCaretPosition(messageArea.getDocument().getLength()); // Auto-scroll to bottom
+    }
+
+    public void updateCurrentPlayer(IPlayer serverPlayer) {
+        clientPlayer = serverPlayer;
     }
 
     public int getCardYCoordinates(ICard card) {
