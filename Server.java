@@ -82,37 +82,18 @@ public class Server implements Observable {
                     //Read object from client
                     Object clientMessage = input.readObject();
                     //If object is a string
-                    if (clientMessage instanceof String) {
+                    if (clientMessage instanceof String message) {
                         //Deserialize
-                        String message = (String) clientMessage;
                         System.out.println("Received string from client: " + message);
                         notifyObservers(message);
                     //If object is client's currentPlayer
-                    } else if (clientMessage instanceof IPlayer) {
+                    } else if (clientMessage instanceof IPlayer clientPlayer) {
                         //Deserialize
-                        IPlayer clientPlayer = (Player) clientMessage;
                         System.out.println("Received player from client: " + clientPlayer.getName());
-
-                        int playerIndex = -1;
-                        //Search for player in player list
-                        for (IPlayer playerInList : players) {
-                            //Replace current instance if already in List
-                            if(playerInList.getName().equals(clientPlayer.getName()))
-                            {
-                                playerIndex = players.indexOf(playerInList);
-                                break;
-                            }
-                        }
-                        //If not found in list
-                        if(playerIndex == -1)
-                        {
-                            //Add at the end
-                            players.add((players.size() -1), clientPlayer);
-                        }
-                        else
-                        {
-                            //Add at found index
-                            players.add(playerIndex, clientPlayer);
+                        //Add to players if not found, replace old version if found
+                        updatePlayers(clientPlayer);
+                        if(players.size() >= 2) {
+                            giveStartSignal();
                         }
                     }
                 }
@@ -131,6 +112,38 @@ public class Server implements Observable {
             }
         }
         
+    }
+
+    private void giveStartSignal() {
+        Boolean startSignal = true;
+        for (Observer observer : observers) {
+            observer.update(startSignal);  // Send update to all clients
+        }
+    }
+
+    private void updatePlayers(IPlayer clientPlayer) {
+        int playerIndex = -1;
+        //Search for player in player list
+        for (IPlayer playerInList : players) {
+            //Replace current instance if already in List
+            if(playerInList.getName().equals(clientPlayer.getName()))
+            {
+                playerIndex = players.indexOf(playerInList);
+                break;
+            }
+        }
+        //If not found in list
+        if(playerIndex == -1)
+        {
+            //Add at the end
+            players.add((players.size() -1), clientPlayer);
+            notifyObservers("New Player: " + clientPlayer.getName() + " connected!");
+        }
+        else
+        {
+            //Add at found index
+            players.add(playerIndex, clientPlayer);
+        }
     }
 
     // Inner class for ClientObserver, implements Observer

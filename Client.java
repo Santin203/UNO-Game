@@ -44,6 +44,10 @@ public class Client implements Observer {
         {
             gui.updateCurrentPlayer(updatedPlayer);
         }
+        else if (message instanceof Boolean startSignal)
+        {
+            //Allow player to start game
+        }
         // Update GUI with messages from the server
     }
 
@@ -52,7 +56,7 @@ public class Client implements Observer {
         public void run() {
             try {
                 while (true) {
-                    String message = (String) input.readObject();
+                    Object message = (String) input.readObject();
                     System.out.println("Received from server: " + message);
                     update(message);  // Call the update method
                 }

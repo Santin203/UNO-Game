@@ -10,12 +10,14 @@ public class Game implements IGame {
     private IPlayer previousPlayer;
     private int playerIndex;
     private int order;
+    private Server gameServer;
 
     public Game(ArrayList<IPlayer> players) {
         this.players = players;
         this.discardPile = Deck.buildDeck(0);
         this.playerIndex = 0;
         this.order = 1;
+        this.gameServer = null;
     }
 
     public static Game getInstance(ArrayList<IPlayer> players) {
@@ -23,6 +25,10 @@ public class Game implements IGame {
             instance = new Game(players);
         }
         return instance;
+    }
+
+    public void setGameServer(Server serverInstance) {
+        this.gameServer = serverInstance;
     }
 
     @Override
