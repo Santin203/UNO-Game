@@ -59,7 +59,6 @@ public class Server implements Observable {
     // PlayerHandler class for handling individual players
     private class PlayerHandler implements Runnable {
         private Socket socket;
-        private IPlayer player;
         private ObjectInputStream input;
         private ObjectOutputStream output;
 
@@ -98,7 +97,7 @@ public class Server implements Observable {
                         //Search for player in player list
                         for (IPlayer playerInList : players) {
                             //Replace current instance if already in List
-                            if(player.getName().equals(clientPlayer.getName()))
+                            if(playerInList.getName().equals(clientPlayer.getName()))
                             {
                                 playerIndex = players.indexOf(playerInList);
                                 break;

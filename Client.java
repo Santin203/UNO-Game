@@ -36,17 +36,15 @@ public class Client implements Observer {
 
     @Override
     public void update(Object message) {
-        if(message instanceof String)
+        if(message instanceof String serverMessage)
         {
-            String serverMessage = (String) message;
             gui.updateMessageArea(serverMessage);
         }
-        else if (message instanceof Player)
+        else if (message instanceof Player updatedPlayer)
         {
-            IPlayer updatedPlayer = (Player) message;
             gui.updateCurrentPlayer(updatedPlayer);
         }
-          // Update GUI with messages from the server
+        // Update GUI with messages from the server
     }
 
     private class ServerListener implements Runnable {
