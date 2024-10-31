@@ -10,9 +10,7 @@ public class ColorDecorator extends BaseCard {
 
     @Override
     public void play(IGame game) {
-        baseCard.play(game);
-        System.out.println("Color changed to " + color);
-        // Additional logic for changing color
+        System.out.println("Player plays a " + color + " card!");
     }
 
     public String getColor() {

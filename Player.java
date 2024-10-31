@@ -1,32 +1,45 @@
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class Player implements IPlayer, Serializable {
     private static final long serialVersionUID = 1L;
     private String name;
     private ArrayList<ICard> hand;
-    private int status;
+    private int status; // 0 = playing, 1 = winner, 2 = called UNO, 3 = one card but didn't call UNO
+    private boolean unoCalled;
 
     public Player(String name) {
         this.name = name;
         this.hand = new ArrayList<>();
-        this.status = 0;  // 0 = playing, 1 = winner, 2 = one card-called UNO, 3 = one card-didn't called UNO
+        this.status = 0; 
+        this.unoCalled = false;
     }
 
     @Override
     public void drawCard(ICard card) {
         hand.add(card);
+        unoCalled = false; // Reset UNO call status if player draws a card
     }
 
     @Override
-    public boolean playCard(ICard card, IGame game) {
-        // Logic to play a card
+    public void playCard(ICard card, IGame game) {
         card.play(game);
         game.getDiscardDeck().addCard(card);
         hand.remove(card);
-        return true;
+
+        // Update status after playing a card
+        updateStatusPlay();
+    }
+
+    private void updateStatusPlay() {
+        if (hand.isEmpty()) {
+            status = 1; // Player won
+        } else if (needsToCallUno()) {
+            status = unoCalled ? 2 : 3; // Set status based on UNO call
+        } else {
+            status = 0; // Continue playing
+        }
     }
 
     @Override
@@ -50,16 +63,54 @@ public class Player implements IPlayer, Serializable {
     }
 
     @Override
-    public String getAction(Map<String, Boolean> options){
-        ArrayList<String> availableOptions = options.entrySet().stream()
-                .filter(entry -> entry.getValue()) // Keep only entries with true values
-                .map(Map.Entry::getKey)            // Extract the keys
-                .collect(Collectors.toCollection(ArrayList::new));
-        
-        //Insert code to get input from user through UI
-        //Replace current line with logic
-        String option = availableOptions.get(0); 
-        return option;
+    public String getAction(List<String> options){        
+        // Insert code to get input from user through UI, placeholder for now
+        return options.get(0); // Default to first option for simplicity
+    }
+
+    @Override
+    public boolean hasPlayableCard(ICard topCard) {
+        for (ICard card : hand) {
+            if (card.canBePlayed(topCard)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public ICard selectCardToPlay(ICard topCard) {
+        for (ICard card : hand) {
+            if (card.canBePlayed(topCard)) {
+                return card; // Returns first playable card; adjust as needed for player choice
+            }
+        }
+        return null; // No playable card
+    }
+
+    @Override
+    public boolean needsToCallUno() {
+        return hand.size() == 1 && !unoCalled;
+    }
+
+    @Override
+    public void callUno() {
+        if (hand.size() == 1) {
+            unoCalled = true;
+        }
+    }
+
+    @Override
+    public boolean hasCalledUno() {
+        return unoCalled;
+    }
+
+    @Override
+    public void givePenaltyForNotCallingUno(IGame game) {
+        if (!unoCalled && hand.size() == 1) {
+            drawCard(game.getGameDeck().giveCard());
+            drawCard(game.getGameDeck().giveCard());
+        }
     }
 
 }

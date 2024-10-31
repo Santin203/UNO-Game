@@ -10,7 +10,6 @@ public class ReverseDecorator extends BaseCard {
     public void play(IGame game) {
         baseCard.play(game);
         System.out.println("Reverse effect activated!");
-        // Additional logic for reverse effect
         applyReverseEffect(game);
     }
 
