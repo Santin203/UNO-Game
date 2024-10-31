@@ -1,7 +1,8 @@
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
 
 public class Game implements IGame {
+    private static Game instance;
     private ArrayList<IPlayer> players;
     private IDeck discardPile;
     private IDeck gamePile;
@@ -17,33 +18,17 @@ public class Game implements IGame {
         this.order = 1;
     }
 
+    public static Game getInstance(ArrayList<IPlayer> players) {
+        if (instance == null) {
+            instance = new Game(players);
+        }
+        return instance;
+    }
+
     @Override
     public void startGame() {
-        // Logic to start the game
-
-        double decksN = (players.size() + 9 ) /10;
-        gamePile = Deck.buildDeck((int)decksN);
-
-        for(int i = 0; i < 7; i++)
-        {
-            //Deal cards to players, 7 each
-            for (IPlayer player : players)
-            {
-                player.drawCard(gamePile.giveCard());
-            }
-        }
-
-        //Get initial card, can't be a special card
-        ICard topCard = gamePile.giveCard();
-        while(topCard instanceof ChangeColorDecorator || topCard instanceof DrawKDecorator ||
-         topCard instanceof ReverseDecorator || topCard instanceof SkipDecorator)
-        {
-            gamePile.addCard(topCard);
-            gamePile.shuffleCards();
-            topCard = gamePile.giveCard();
-        }
-        discardPile.addCard(topCard);
-        
+        setupGamePile();
+        dealInitialCards();        
 
         //Game loop
         while(true)
@@ -61,6 +46,28 @@ public class Game implements IGame {
         }
     }
 
+    private void setupGamePile() {
+        int deckCount = Math.max(1, (players.size() + 9) / 10);
+        gamePile = Deck.buildDeck(deckCount);
+        ICard initialCard;
+        gamePile.shuffleCards();
+        
+        do {
+
+            initialCard = gamePile.giveCard();
+        } while(initialCard instanceof ChangeColorDecorator || initialCard instanceof DrawKDecorator || initialCard instanceof ReverseDecorator || initialCard instanceof SkipDecorator);
+
+        discardPile.addCard(initialCard);
+    }
+
+    private void dealInitialCards() {
+        for (int i = 0; i < 7; i++) {
+            for (IPlayer player : players) {
+                player.drawCard(gamePile.giveCard());
+            }
+        }
+    }
+
     @Override
     public void checkWinner() {
         // Logic to check if someone has won
@@ -68,37 +75,14 @@ public class Game implements IGame {
 
     @Override
     public void nextTurn() {
-        // Logic for the next player's turn
         ArrayList<ICard> currentHand = currentPlayer.getHand();
+        ICard topCard = discardPile.getTopCard();
         
         // Define player's options for current turn
-        Map<String, Boolean> options = Map.of(
-            "playCard", false, 
-            "pickCard", false, 
-            "challengeTake4", false, 
-            "challengeUno", false,
-            "callUno", false);
+        List<String> options = getAvailableOptions();
 
-        // Check which cards can be played from the player's hand
-        ArrayList<Integer> playableIndexes = new ArrayList<>();
-        ICard currentTopCard = discardPile.getTopCard();
-        
-        for (int i = 0; i < currentHand.size(); i++) {
-            ICard card = currentHand.get(i);
-            
-            // Instead of checking the type of card, we let each card determine if it can be played
-            if (card.canBePlayed(currentTopCard)) {
-                playableIndexes.add(i);
-            }
-        }
-
-        // If cards are available to be played
-        if (!playableIndexes.isEmpty()) {
-            options.put("playCard", true);
-        } 
-
-        //Player can always pick a card
-        options.put("pickCard", true);
+        //Get indexes of playable cards
+        ArrayList<Integer> playableIndexes = getPlayableIndexes(currentHand, topCard);
 
         //Get action from player
         String action = currentPlayer.getAction(options);
@@ -107,63 +91,74 @@ public class Game implements IGame {
         switch(action)
         {
             case "pickCard" -> {
-                //Draw card from gamePile
-                currentPlayer.drawCard(gamePile.giveCard());
-                //Check if card can be played inmediately
-                if(currentHand.get(currentHand.size()-1).canBePlayed(currentTopCard))
-                {
-                    int playerAction = 0;
-                    if(playerAction == 0)
-                    {
-                        currentPlayer.playCard(currentHand.get(currentHand.size()-1), this);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-                }
-            case "playCard" -> {
-                boolean calledUNO = false;
+                handlePickCard(currentHand, topCard);
 
-                if(currentHand.size() == 2)
-                {
-                    options.put("callUno", true);
-                    //Add logic to call UNO from UI
-                }
-                //Add code to chose card from UI
-                //Replace with logic
-                int cardIndex = playableIndexes.get(0);
-                //Play card at selected index
-                currentPlayer.playCard(currentHand.get(cardIndex), this);
-                switch(currentHand.size())
-                {
-                    case 0:
-                        //Won
-                        currentPlayer.setStatus(1);
-                    case 1:
-                        if(calledUNO)
-                        {
-                            //Called UNO properly
-                            currentPlayer.setStatus(2);
-                        }
-                        else
-                        {
-                            //Didn't call UNO
-                            currentPlayer.setStatus(3);
-                        }
-                        break;
-                    default:
-                        //Still playing like normal
-                        currentPlayer.setStatus(0);
-                }
-                return;
+            }
+            case "playCard" -> {
+                handlePlayCard(topCard);
+
             }
             default -> {
+                System.out.println("Invalid action");
                 return;
             }
         }
 
+    }
+
+    private List<String> getAvailableOptions() {
+        List<String> options = new ArrayList<>();
+        if (currentPlayer.hasPlayableCard(discardPile.getTopCard())) {
+            options.add("playCard");
+        }
+        if (checkUnoPlayers()) {
+            options.add("callUno");
+        }
+        options.add("pickCard");
+        return options;
+    }
+
+    private boolean checkUnoPlayers() {
+        for (IPlayer player : players) {
+            if (player.needsToCallUno() && !player.hasCalledUno()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private ArrayList<Integer> getPlayableIndexes(ArrayList<ICard> currentHand, ICard currentTopCard) {
+        ArrayList<Integer> playableIndexes = new ArrayList<>();
+        for (int i = 0; i < currentHand.size(); i++) {
+            if (currentHand.get(i).canBePlayed(currentTopCard)) {
+                playableIndexes.add(i);
+            }
+        }
+        return playableIndexes;
+    }
+
+    private void handlePickCard(ArrayList<ICard> currentHand, ICard currentTopCard) {
+        currentPlayer.drawCard(gamePile.giveCard());
+
+        ICard lastDrawnCard = currentHand.get(currentHand.size() - 1);
+
+        if (lastDrawnCard.canBePlayed(currentTopCard)) {
+            currentPlayer.playCard(lastDrawnCard, this);
+        }
+    }
+
+    private void handlePlayCard(ICard topCard) {
+        ICard cardToPlay = currentPlayer.selectCardToPlay(topCard);
+        if (cardToPlay != null) {
+            currentPlayer.playCard(cardToPlay, this);
+        }
+        checkUnoCall();
+    }
+
+    private void checkUnoCall() {
+        if (currentPlayer.needsToCallUno() && !currentPlayer.hasCalledUno()) {
+            currentPlayer.givePenaltyForNotCallingUno(this);
+        }
     }
 
     @Override
