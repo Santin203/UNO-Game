@@ -39,7 +39,7 @@ public class DrawKDecorator extends BaseCard {
 
     @Override
     public boolean canBePlayed(ICard topCard) {
-        return true;
+        return baseCard.canBePlayed(topCard);
     }
 
     public BaseCard getWrappedCard() {

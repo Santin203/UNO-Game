@@ -18,5 +18,6 @@ public abstract class BaseCard implements ICard, Serializable {
 
     public String getColor() {
         throw new UnsupportedOperationException("This card does not have a color.");
+        
     }
 }

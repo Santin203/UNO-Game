@@ -76,7 +76,11 @@ public class Game implements IGame {
 
     @Override
     public void checkWinner() {
-        // Logic to check if someone has won
+        for (IPlayer player : players) {
+            if (player.checkStatus() == 1) {
+                System.out.println(player.getName() + " has won the game!");
+            }
+        }
     }
 
     @Override
@@ -87,7 +91,7 @@ public class Game implements IGame {
         // Define player's options for current turn
         List<String> options = getAvailableOptions();
 
-        //Get indexes of playable cards
+        //Get indexes of playable cards (for ui)
         ArrayList<Integer> playableIndexes = getPlayableIndexes(currentHand, topCard);
 
         //Get action from player
@@ -117,21 +121,20 @@ public class Game implements IGame {
         if (currentPlayer.hasPlayableCard(discardPile.getTopCard())) {
             options.add("playCard");
         }
-        if (checkUnoPlayers()) {
-            options.add("callUno");
-        }
+        options.add("callUno");
+
         options.add("pickCard");
         return options;
     }
 
-    private boolean checkUnoPlayers() {
-        for (IPlayer player : players) {
-            if (player.needsToCallUno() && !player.hasCalledUno()) {
-                return true;
-            }
-        }
-        return false;
-    }
+    // private boolean checkUnoPlayers() {
+    //     for (IPlayer player : players) {
+    //         if (player.needsToCallUno() && !player.hasCalledUno()) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 
     private ArrayList<Integer> getPlayableIndexes(ArrayList<ICard> currentHand, ICard currentTopCard) {
         ArrayList<Integer> playableIndexes = new ArrayList<>();
@@ -163,7 +166,7 @@ public class Game implements IGame {
 
     private void checkUnoCall() {
         if (currentPlayer.needsToCallUno() && !currentPlayer.hasCalledUno()) {
-            currentPlayer.givePenaltyForNotCallingUno(this);
+            currentPlayer.giveUnoPenalty(this);
         }
     }
 

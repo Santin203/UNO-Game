@@ -14,5 +14,5 @@ public interface IPlayer {
     boolean needsToCallUno();
     void callUno();
     boolean hasCalledUno();
-    void givePenaltyForNotCallingUno(IGame game);
+    void giveUnoPenalty(IGame game);
 }

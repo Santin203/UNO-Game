@@ -106,7 +106,7 @@ public class Player implements IPlayer, Serializable {
     }
 
     @Override
-    public void givePenaltyForNotCallingUno(IGame game) {
+    public void giveUnoPenalty(IGame game) {
         if (!unoCalled && hand.size() == 1) {
             drawCard(game.getGameDeck().giveCard());
             drawCard(game.getGameDeck().giveCard());

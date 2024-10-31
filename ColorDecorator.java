@@ -13,6 +13,7 @@ public class ColorDecorator extends BaseCard {
         System.out.println("Player plays a " + color + " card!");
     }
 
+    @Override
     public String getColor() {
         return color;  // Color is only defined here
     }
