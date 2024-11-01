@@ -45,4 +45,8 @@ public class DrawKDecorator extends BaseCard {
     public BaseCard getWrappedCard() {
         return baseCard;
     }
+
+    public String getColor() {
+        return baseCard.getColor();
+    }
 }

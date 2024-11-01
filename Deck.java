@@ -3,9 +3,11 @@ import java.util.Collections;
 
 public class Deck implements IDeck {
     private ArrayList<ICard> cards;
+    private int size;
 
     public Deck() {
         cards = new ArrayList<>();
+        size = 0;
     }
 
     @Override
@@ -85,8 +87,8 @@ public class Deck implements IDeck {
     private void createWildCards(IDeck deckUnfilled) {
         for (int k = 0; k < 4; k++) {
             // Add ChangeColor and Draw 4 cards with no initial color
-            deckUnfilled.addCard(new ChangeColorDecorator(new ColorDecorator(null, "Black")));
-            deckUnfilled.addCard(new DrawKDecorator(new ChangeColorDecorator(new ColorDecorator(null, "Black")), 4));
+            deckUnfilled.addCard(new ChangeColorDecorator(new ColorDecorator(null, "black")));
+            deckUnfilled.addCard(new DrawKDecorator(new ChangeColorDecorator(new ColorDecorator(null, "black")), 4));
 
             
         }
@@ -97,5 +99,9 @@ public class Deck implements IDeck {
         newDeck.fillDeck(newDeck, decksN);
         newDeck.shuffleCards();
         return newDeck;
+    }
+
+    public int getDeckSize() {
+        return cards.size();
     }
 }

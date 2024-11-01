@@ -26,7 +26,7 @@ public class Game implements IGame {
         }
         return instance;
     }
-    
+
     @Override
     public void setGameServer(Server serverInstance) {
         this.gameServer = serverInstance;
@@ -40,12 +40,15 @@ public class Game implements IGame {
         //Game loop
         while(true)
         {
+            checkFewCardsDeck();
             currentPlayer = players.get(playerIndex);
             nextTurn();
+            
             //If current player has no more cards
             if(currentPlayer.checkStatus() == 1)
             {
                 //Current player Won, game ends
+                System.out.println(currentPlayer.getName() + " has won the game!");
                 break;
             }
             previousPlayer = currentPlayer;
@@ -75,12 +78,18 @@ public class Game implements IGame {
         }
     }
 
-    @Override
-    public void checkWinner() {
-        for (IPlayer player : players) {
-            if (player.checkStatus() == 1) {
-                System.out.println(player.getName() + " has won the game!");
+    private void checkFewCardsDeck() {
+        if (gamePile.getDeckSize() <= 6) {
+            ICard currentCard = discardPile.giveCard();
+            IDeck tempDeck = gamePile;
+            gamePile = discardPile;
+            discardPile = new Deck();
+            while (tempDeck.getDeckSize() > 0) {
+                discardPile.addCard(tempDeck.giveCard());
             }
+            discardPile.addCard(currentCard);
+            gamePile.shuffleCards();
+            System.out.println("Deck is empty, reshuffling discard pile");
         }
     }
 
@@ -103,6 +112,7 @@ public class Game implements IGame {
         {
             case "pickCard" -> {
                 handlePickCard(currentHand, topCard);
+                System.out.println("Player " + currentPlayer.getName() + " picked a card");
 
             }
             case "playCard" -> {
@@ -122,9 +132,9 @@ public class Game implements IGame {
         if (currentPlayer.hasPlayableCard(discardPile.getTopCard())) {
             options.add("playCard");
         }
-        options.add("callUno");
 
         options.add("pickCard");
+        options.add("callUno");
         return options;
     }
 
@@ -152,6 +162,10 @@ public class Game implements IGame {
 
         ICard lastDrawnCard = currentHand.get(currentHand.size() - 1);
 
+        if (lastDrawnCard == null) {
+            System.out.println("Player " + currentPlayer.getName() + " drew a card");
+        }
+
         if (lastDrawnCard.canBePlayed(currentTopCard)) {
             currentPlayer.playCard(lastDrawnCard, this);
         }
@@ -162,7 +176,7 @@ public class Game implements IGame {
         if (cardToPlay != null) {
             currentPlayer.playCard(cardToPlay, this);
         }
-        checkUnoCall();
+        //checkUnoCall();
     }
 
     private void checkUnoCall() {
