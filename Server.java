@@ -2,11 +2,13 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 // Singleton Server class
 public class Server implements Observable {
     private static Server instance = null;  // Singleton instance
     private ArrayList<IPlayer> players = new ArrayList<>();
+    private Map<String, Integer> playerInfo;
     private IGame game;
     private ServerSocket serverSocket;
     private List<Observer> observers = new ArrayList<>(); // List of observers (clients)
@@ -53,6 +55,7 @@ public class Server implements Observable {
 
     @Override
     public void removeObserver(Observer observer) {
+        observer.update("NAME_REQUEST");
         observers.remove(observer);  // Remove client from observers list
     }
 
@@ -83,19 +86,25 @@ public class Server implements Observable {
                     Object clientMessage = input.readObject();
                     //If object is a string
                     if (clientMessage instanceof String message) {
-                        //Deserialize
-                        System.out.println("Received string from client: " + message);
+                        //If incoming message is an answer to a name request
+                        if(message.contains("NAME_REQUEST")) {
+                            removePlayerFromList(message);
+                        } else {
+                            System.out.println("Received string from client: " + message);
                         notifyObservers(message);
+                        }
                     //If object is client's currentPlayer
                     } else if (clientMessage instanceof IPlayer clientPlayer) {
-                        //Deserialize
                         System.out.println("Received player from client: " + clientPlayer.getName());
                         //Add to players if not found, replace old version if found
-                        updatePlayers(clientPlayer);
+                        addPlayers(clientPlayer);
                         if(players.size() >= 2) {
                             giveStartSignal();
                         }
+                    } else if (clientMessage instanceof Boolean) {
+                        startGame();
                     }
+                        
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
@@ -114,6 +123,31 @@ public class Server implements Observable {
         
     }
 
+    private void startGame() {
+        game = new Game(players);
+        game.setGameServer(instance);
+    }
+
+    private void removePlayerFromList(String message) {
+        //Store client's player name into nameRequest and remove it from players list
+        String nameRequest = message.replace("NAME_REQUEST", "");
+        for (IPlayer playerInList : players) {
+            //Replace current instance if already in List
+            if(playerInList.getName().equals(nameRequest))
+            {
+                players.remove(playerInList);
+                removePlayerInfo(message);
+                break;
+            }
+        }
+    }
+
+    private void removePlayerInfo(String message) {
+        if(playerInfo.containsKey(message)) {
+            playerInfo.remove(message);
+        }
+    }
+
     private void giveStartSignal() {
         Boolean startSignal = true;
         for (Observer observer : observers) {
@@ -121,7 +155,7 @@ public class Server implements Observable {
         }
     }
 
-    private void updatePlayers(IPlayer clientPlayer) {
+    private void addPlayers(IPlayer clientPlayer) {
         int playerIndex = -1;
         //Search for player in player list
         for (IPlayer playerInList : players) {
@@ -143,6 +177,14 @@ public class Server implements Observable {
         {
             //Add at found index
             players.add(playerIndex, clientPlayer);
+        }
+
+        addPlayerInfo();
+    }
+    private void addPlayerInfo() {
+        for(IPlayer playerInList: players) {
+            Integer handSize = playerInList.getHand().size();
+            playerInfo.put(playerInList.getName(), handSize);
         }
     }
 

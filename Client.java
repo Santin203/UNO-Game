@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.Dictionary;
 import java.util.Random;
 
 public class Client implements Observer {
@@ -36,17 +37,27 @@ public class Client implements Observer {
 
     @Override
     public void update(Object message) {
-        if(message instanceof String serverMessage)
-        {
-            gui.updateMessageArea(serverMessage);
+        if(message instanceof String serverMessage) {
+            if(serverMessage.equals("NAME_REQUEST")) {
+                try {
+                    output.writeObject("NAME_REQUEST "+currentPlayer.getName());  // Sends current player's name to server
+                    output.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                gui.updateMessageArea(serverMessage);
+            }
         }
-        else if (message instanceof Player updatedPlayer)
-        {
+        else if (message instanceof Player updatedPlayer) {
             gui.updateCurrentPlayer(updatedPlayer);
         }
-        else if (message instanceof Boolean startSignal)
-        {
+        else if (message instanceof Boolean startSignal) {
             //Allow player to start game
+        }
+        else if (message instanceof Dictionary) {
+
         }
         // Update GUI with messages from the server
     }

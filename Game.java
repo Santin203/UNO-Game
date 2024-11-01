@@ -26,7 +26,8 @@ public class Game implements IGame {
         }
         return instance;
     }
-
+    
+    @Override
     public void setGameServer(Server serverInstance) {
         this.gameServer = serverInstance;
     }

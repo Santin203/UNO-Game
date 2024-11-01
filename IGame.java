@@ -10,4 +10,5 @@ public interface IGame {
     ArrayList<IPlayer> getPlayers();
     int getPlayerIndex();
     void revertOrder();
+    public void setGameServer(Server instance);
 }
