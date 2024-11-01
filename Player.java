@@ -19,6 +19,9 @@ public class Player implements IPlayer, Serializable {
     @Override
     public void drawCard(ICard card) {
         hand.add(card);
+        if (card == null) {
+            System.out.println("Player " + name + " drew a card");
+        }
         unoCalled = false; // Reset UNO call status if player draws a card
     }
 

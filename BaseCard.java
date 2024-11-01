@@ -16,8 +16,8 @@ public abstract class BaseCard implements ICard, Serializable {
     //     return ((ColorDecorator) this).getColor().equals(topCardColor);
     // }
 
-    public String getColor() {
-        throw new UnsupportedOperationException("This card does not have a color.");
-        
-    }
+    // public String getColor() {
+    //     //throw new UnsupportedOperationException("This card does not have a color.");
+    //     return null;
+    // }
 }
