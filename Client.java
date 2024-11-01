@@ -57,7 +57,7 @@ public class Client implements Observer {
             //Allow player to start game
         }
         else if (message instanceof Dictionary) {
-
+            //Update other players in GUI
         }
         // Update GUI with messages from the server
     }
