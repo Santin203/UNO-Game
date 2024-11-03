@@ -66,6 +66,11 @@ public class Player implements IPlayer, Serializable {
     }
 
     @Override
+    public int getHandSize() {
+        return hand.size();
+    }
+
+    @Override
     public String getAction(List<String> options){        
 
         return options.get(0); // Return first as a fallback

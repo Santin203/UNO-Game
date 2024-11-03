@@ -2,7 +2,6 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 // Singleton Server class
@@ -12,7 +11,7 @@ public class Server implements Observable {
     private Map<String, Integer> playerInfo = new HashMap<>();
     private IGame game;
     private ServerSocket serverSocket;
-    private List<Observer> observers = new ArrayList<>(); // List of observers (clients)
+    private Map<String, Observer> observers = new HashMap<>(); // Dictionary of observers (clients) and player names
 
     // Private constructor (Singleton)
     private Server(int port) throws IOException {
@@ -44,21 +43,55 @@ public class Server implements Observable {
     // Broadcast message to all clients
     @Override
     public void notifyObservers(String message) {
-        for (Observer observer : observers) {
+        for (var entry : observers.entrySet()) {
+            Observer observer = entry.getValue();
             observer.update(message);  // Send update to all clients
         }
     }
 
     @Override
     public void addObserver(Observer observer) {
-        observers.add(observer);  // Add client as an observer
-        observer.update("PLAYER_REQUEST");
+        observer.update("NAME_REQUEST"); //Request name to observer to add into list
     }
 
     @Override
     public void removeObserver(Observer observer) {
-        observer.update("NAME_REQUEST");
+        for(var entry: observers.entrySet()) {
+            if(entry.getValue() == observer)
+            {
+                //Remove player from dictionary with names and hand sizes
+                removePlayerInfo(entry.getKey());
+                //Remove player from list with all player instances
+                removePlayerFromList(entry.getKey());
+                //Remove player from game's list of players
+                for(IPlayer player : players) {
+                    if(entry.getKey().equals(player.getName())) {
+                        game.removePlayer(player);
+                    }
+                }
+            }
+        }
         observers.remove(observer);  // Remove client from observers list
+    }
+    
+    public void sendPlayers(ArrayList<IPlayer> players) {
+        for(var entry: observers.entrySet()) {
+            Map <String, Integer> otherPlayers = new HashMap<>();
+            for(IPlayer player : players) {
+                if(!(entry.getKey().equals(player.getName()))) {
+                    otherPlayers.put(player.getName(), player.getHandSize());
+                }
+            }
+            //Send dictionary with other players to current observer
+            entry.getValue().update(otherPlayers);
+        }
+    }
+
+    public void sendTopPlayCard(ICard card) {
+        for (var entry : observers.entrySet()) {
+            Observer observer = entry.getValue();
+            observer.update(card);
+        }
     }
 
     // PlayerHandler class for handling individual players
@@ -86,12 +119,13 @@ public class Server implements Observable {
                 while (true) {
                     //Read object from client
                     Object clientMessage = input.readObject();
-                    Class<?> debuggclass = clientMessage.getClass();
                     //If object is a string
                     if (clientMessage instanceof String message) {
                         //If incoming message is an answer to a name request
                         if(message.contains("NAME_REQUEST")) {
-                            removePlayerFromList(message);
+                            String playerName = message.replace("NAME_REQUEST","").trim();
+                            observers.put(playerName, clientObserver);
+                            clientObserver.update("PLAYER_REQUEST");    //Request player instance from client
                         } else {
                             System.out.println("Received string from client: " + message);
                             notifyObservers(message);
@@ -133,15 +167,13 @@ public class Server implements Observable {
         new Thread(() -> game.startGame()).start();
     }
 
-    private void removePlayerFromList(String message) {
-        //Store client's player name into nameRequest and remove it from players list
-        String nameRequest = message.replace("NAME_REQUEST", "");
+    private void removePlayerFromList(String playerName) {
         for (IPlayer playerInList : players) {
             //Replace current instance if already in List
-            if(playerInList.getName().equals(nameRequest))
+            if(playerInList.getName().equals(playerName))
             {
                 players.remove(playerInList);
-                removePlayerInfo(message);
+                removePlayerInfo(playerName);
                 break;
             }
         }
@@ -155,7 +187,8 @@ public class Server implements Observable {
 
     private void giveStartSignal() {
         Boolean startSignal = true;
-        for (Observer observer : observers) {
+        for (var entry : observers.entrySet()) {
+            Observer observer = entry.getValue();
             observer.update(startSignal);  // Send update to all clients
         }
     }

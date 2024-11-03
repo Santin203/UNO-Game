@@ -35,7 +35,8 @@ public class Game implements IGame {
     @Override
     public void startGame() {
         setupGamePile();
-        dealInitialCards();        
+        dealInitialCards();
+
 
         //Game loop
         while(true)
@@ -225,5 +226,10 @@ public class Game implements IGame {
     @Override 
     public void revertOrder() {
         order = order * -1;
+    }
+
+    @Override
+    public void removePlayer(IPlayer player) {
+        
     }
 }

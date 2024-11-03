@@ -8,6 +8,7 @@ public interface IPlayer {
     void setStatus(int newStatus);
     String getName();
     ArrayList<ICard> getHand();
+    int getHandSize();
     String getAction(List<String> options);
     boolean hasPlayableCard(ICard topCard);
     ICard selectCardToPlay(ICard topCard);
