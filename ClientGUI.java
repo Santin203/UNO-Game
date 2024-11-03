@@ -3,6 +3,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -270,8 +271,7 @@ public class ClientGUI {
     }
 
     // Method to show color selection dialog
-    public String showColorSelectionDialog() {
-        String[] colors = {"Red", "Green", "Blue", "Yellow"};
+    public String showColorSelectionDialog(String[] colors) {
         String selectedColor = (String) JOptionPane.showInputDialog(
             frame,
             "Choose a color:",
@@ -285,9 +285,22 @@ public class ClientGUI {
         return selectedColor != null ? selectedColor.toLowerCase() : null;
     }
 
+    public String showActionOptions(List<String> options) {
+        String selectedAction = (String) JOptionPane.showInputDialog(
+            frame,
+            "Choose an action:",
+            "Select Action",
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            options.toArray(),
+            options.get(0)  // Default to the first option
+        );
+        return selectedAction;
+    }
+
     // Method to trigger when a ChangeColor card is played
-    public void playChangeColorCard(ChangeColorDecorator card) {
-        String selectedColor = showColorSelectionDialog();
+    public void playChangeColorCard(ChangeColorDecorator card, String[] colors) {
+        String selectedColor = showColorSelectionDialog(colors);
         if (selectedColor != null) {
             card.changeColor(selectedColor);
             updateMessageArea("Color changed to: " + selectedColor);

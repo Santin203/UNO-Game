@@ -1,6 +1,7 @@
 public class ChangeColorDecorator extends BaseCard {
     private BaseCard baseCard;
     private String colorToChange;
+    private String[] colors = {"Red", "Green", "Blue", "Yellow"};
 
     public ChangeColorDecorator(BaseCard baseCard) {
         super();

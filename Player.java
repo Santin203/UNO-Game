@@ -67,8 +67,8 @@ public class Player implements IPlayer, Serializable {
 
     @Override
     public String getAction(List<String> options){        
-        // Insert code to get input from user through UI, placeholder for now
-        return options.get(0); // Default to first option for simplicity
+
+        return options.get(0); // Return first as a fallback
     }
 
     @Override
