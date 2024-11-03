@@ -36,6 +36,7 @@ public class Game implements IGame {
     public void startGame() {
         setupGamePile();
         dealInitialCards();
+        gameServer.sendPlayers(players);
 
 
         //Game loop
@@ -230,6 +231,6 @@ public class Game implements IGame {
 
     @Override
     public void removePlayer(IPlayer player) {
-        
+
     }
 }

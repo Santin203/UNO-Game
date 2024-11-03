@@ -69,29 +69,10 @@ public class Server implements Observable {
                         game.removePlayer(player);
                     }
                 }
+                observers.remove(entry.getKey());  // Remove client from observers list
             }
         }
-        observers.remove(observer);  // Remove client from observers list
-    }
-    
-    public void sendPlayers(ArrayList<IPlayer> players) {
-        for(var entry: observers.entrySet()) {
-            Map <String, Integer> otherPlayers = new HashMap<>();
-            for(IPlayer player : players) {
-                if(!(entry.getKey().equals(player.getName()))) {
-                    otherPlayers.put(player.getName(), player.getHandSize());
-                }
-            }
-            //Send dictionary with other players to current observer
-            entry.getValue().update(otherPlayers);
-        }
-    }
-
-    public void sendTopPlayCard(ICard card) {
-        for (var entry : observers.entrySet()) {
-            Observer observer = entry.getValue();
-            observer.update(card);
-        }
+        
     }
 
     // PlayerHandler class for handling individual players
@@ -139,6 +120,7 @@ public class Server implements Observable {
                             giveStartSignal();
                         }
                     } else if (clientMessage instanceof Boolean) {
+                        notifyObservers("Game has started!");
                         startGame();
                     }
                         
@@ -223,6 +205,30 @@ public class Server implements Observable {
         for(IPlayer playerInList: players) {
             Integer handSize = playerInList.getHand().size();
             playerInfo.put(playerInList.getName(), handSize);
+        }
+    }
+    
+    public void updatePlayer() {
+        
+    }
+    
+    public void sendPlayers(ArrayList<IPlayer> players) {
+        for(var entry: observers.entrySet()) {
+            Map <String, Integer> otherPlayers = new HashMap<>();
+            for(IPlayer player : players) {
+                if(!(entry.getKey().equals(player.getName()))) {
+                    otherPlayers.put(player.getName(), player.getHandSize());
+                }
+            }
+            //Send dictionary with other players to current observer
+            entry.getValue().update(otherPlayers);
+        }
+    }
+
+    public void sendTopPlayCard(ICard card) {
+        for (var entry : observers.entrySet()) {
+            Observer observer = entry.getValue();
+            observer.update(card);
         }
     }
 
