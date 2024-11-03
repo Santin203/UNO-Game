@@ -92,7 +92,7 @@ public class Client implements Observer {
         String userID = generateUserId();
         IPlayer player = new Player(userID);
 
-        ClientGUI gui = new ClientGUI(null);  // Create GUI without client first
+        ClientGUI gui = new ClientGUI(null, player);  // Create GUI without client first
         Client client = new Client("localhost", 12345, gui, player);  // Pass GUI and Player to client
 
         gui.client = client;  // Link client to the GUI

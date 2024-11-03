@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -22,8 +23,9 @@ public class ClientGUI {
     public Client client;  
     private Map<String, Integer> playerInfo = new HashMap<>() ;
 
-    public ClientGUI(Client client) {
+    public ClientGUI(Client client, IPlayer player) {
         this.client = client;
+        this.clientPlayer = player;
         initializeGUI();
     }
 
@@ -80,9 +82,18 @@ public class ClientGUI {
         gbc.fill = GridBagConstraints.NONE;
         gbc.weightx = 1.0;
 
+        ArrayList<ICard> currentHand = clientPlayer.getHand();
+
+        //If player isn't initialized
+        if(currentHand.isEmpty()) {
+            return cardsPanel;
+        }
+
         BufferedImage spriteSheet = openImage("UNO_Cards.png");
-        for (int i = 0; i <= 80; i++) {
-            JButton button = new JButton(new ImageIcon(spriteSheet.getSubimage(0, 0, 32, 48)
+        for (int i = 0; i < currentHand.size(); i++) {
+            int xCoordinates = getCardXCoordinates(currentHand.get(i));
+            int yCoordinates = getCardYCoordinates(currentHand.get(i));
+            JButton button = new JButton(new ImageIcon(spriteSheet.getSubimage(xCoordinates, yCoordinates, 32, 48)
                     .getScaledInstance(32, 48, Image.SCALE_SMOOTH)));
             button.setPreferredSize(new Dimension(64, 96));
             button.setBackground(new Color(0, 0, 0));
@@ -262,6 +273,8 @@ public class ClientGUI {
 
     public void updateCurrentPlayer(IPlayer player) {
         clientPlayer = player;
+        startButton.setVisible(false);
+        startButton.setEnabled(false);
         updateCardsPanel();
     }
 
@@ -275,7 +288,6 @@ public class ClientGUI {
     
         // Add the updated cards panel back to handPanel
         handPanel.add(updatedCardsScrollPane, BorderLayout.CENTER);
-    
         // Refresh the frame to display updates
         frame.revalidate();
         frame.repaint();
@@ -288,13 +300,16 @@ public class ClientGUI {
             int integerValue = Integer.parseInt(value);
             coordinates = 32*integerValue;
         }
-        if(card instanceof SkipDecorator) {
+        else if(card instanceof SkipDecorator) {
             coordinates = 320;
         }
-        if(card instanceof ReverseDecorator) {
+        else if(card instanceof ReverseDecorator) {
             coordinates = 352;
         }
-        if(card instanceof DrawKDecorator drawKDecorator) {
+        else if(card instanceof ChangeColorDecorator) {
+            coordinates = 160;
+        }
+        else if(card instanceof DrawKDecorator drawKDecorator) {
             int drawCount = drawKDecorator.getDrawCount();
             if(drawCount == 2) {
                 coordinates = 384;
@@ -306,8 +321,27 @@ public class ClientGUI {
         return coordinates;
     }
 
-    private void getCardYCoordinates(ICard card) {
-
+    private int getCardYCoordinates(ICard card) {
+        int coordinates = 0;
+        String color = card.getColor();
+        switch(color) {
+            case "red":
+                coordinates = 0;
+                break;
+            case "blue":
+                coordinates = 48;
+                break;
+            case "yellow":
+                coordinates = 96;
+                break;
+            case "green":
+                coordinates = 144;
+                break;
+            case "black":
+                coordinates = 192;
+            default:
+        }
+        return coordinates;
     }
     // Method to show color selection dialog
     public String showColorSelectionDialog(String[] colors) {
@@ -345,5 +379,4 @@ public class ClientGUI {
             updateMessageArea("Color changed to: " + selectedColor);
         }
     }
-
 }

@@ -207,21 +207,29 @@ public class Server implements Observable {
             playerInfo.put(playerInList.getName(), handSize);
         }
     }
-    
+
     public void updatePlayer() {
         
     }
     
     public void sendPlayers(ArrayList<IPlayer> players) {
         for(var entry: observers.entrySet()) {
+            IPlayer currentPlayer = new Player("");
+
             Map <String, Integer> otherPlayers = new HashMap<>();
             for(IPlayer player : players) {
                 if(!(entry.getKey().equals(player.getName()))) {
                     otherPlayers.put(player.getName(), player.getHandSize());
                 }
+                else {
+                    //Send current player instance back
+                    currentPlayer = player;
+                }
             }
             //Send dictionary with other players to current observer
             entry.getValue().update(otherPlayers);
+            //Send updated player instance to client
+            entry.getValue().update(currentPlayer);
         }
     }
 
