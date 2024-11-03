@@ -281,6 +281,34 @@ public class ClientGUI {
         frame.repaint();
     }
 
+    private int getCardXCoordinates(ICard card) {
+        int coordinates = 0;
+        if(card instanceof NumberDecorator numberDecorator) {
+            String value = numberDecorator.getNumber();
+            int integerValue = Integer.parseInt(value);
+            coordinates = 32*integerValue;
+        }
+        if(card instanceof SkipDecorator) {
+            coordinates = 320;
+        }
+        if(card instanceof ReverseDecorator) {
+            coordinates = 352;
+        }
+        if(card instanceof DrawKDecorator drawKDecorator) {
+            int drawCount = drawKDecorator.getDrawCount();
+            if(drawCount == 2) {
+                coordinates = 384;
+            }
+            else {
+                coordinates = 0;
+            }
+        }
+        return coordinates;
+    }
+
+    private void getCardYCoordinates(ICard card) {
+
+    }
     // Method to show color selection dialog
     public String showColorSelectionDialog(String[] colors) {
         String selectedColor = (String) JOptionPane.showInputDialog(

@@ -21,6 +21,10 @@ public class DrawKDecorator extends BaseCard {
         //game.drawCardsForNextPlayer(drawCount);
     }
 
+    public int getDrawCount() {
+        return drawCount;
+    }
+
     private void applyDrawKEffect(IGame game) {
         // Logic to force the next player to draw 2 cards
 
