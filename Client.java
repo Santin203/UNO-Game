@@ -1,6 +1,6 @@
 import java.io.*;
 import java.net.*;
-import java.util.Dictionary;
+import java.util.Map;
 import java.util.Random;
 
 public class Client implements Observer {
@@ -46,18 +46,27 @@ public class Client implements Observer {
                     e.printStackTrace();
                 }
             }
+            else if (serverMessage.equals("PLAYER_REQUEST")) {
+                sendToServer(currentPlayer);
+            }
             else {
                 gui.updateMessageArea(serverMessage);
             }
         }
-        else if (message instanceof Player updatedPlayer) {
+        else if (message instanceof IPlayer updatedPlayer) {
             gui.updateCurrentPlayer(updatedPlayer);
         }
         else if (message instanceof Boolean startSignal) {
-            //Allow player to start game
+            gui.updateStartButton(startSignal);
         }
-        else if (message instanceof Dictionary) {
-            //Update other players in GUI
+        else if (message instanceof Map<?,?>) {
+            // Cast to Map<String, Integer> if the map is of that type
+            try {
+                gui.updatePlayerInfo((Map<String, Integer>) message);
+            } catch (ClassCastException e) {
+                System.err.println("Received map is not of type Map<String, Integer>");
+                e.printStackTrace();
+            }
         }
         // Update GUI with messages from the server
     }
@@ -67,7 +76,7 @@ public class Client implements Observer {
         public void run() {
             try {
                 while (true) {
-                    Object message = (String) input.readObject();
+                    Object message = input.readObject();
                     System.out.println("Received from server: " + message);
                     update(message);  // Call the update method
                 }
@@ -89,7 +98,7 @@ public class Client implements Observer {
         gui.client = client;  // Link client to the GUI
     }
 
-    public static String generateUserId() {
+    private static String generateUserId() {
         Random random = new Random();
         // Generates a random integer between 0 and 999
         int userID1 = random.nextInt(1000);

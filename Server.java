@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +9,7 @@ import java.util.Map;
 public class Server implements Observable {
     private static Server instance = null;  // Singleton instance
     private ArrayList<IPlayer> players = new ArrayList<>();
-    private Map<String, Integer> playerInfo;
+    private Map<String, Integer> playerInfo = new HashMap<>();
     private IGame game;
     private ServerSocket serverSocket;
     private List<Observer> observers = new ArrayList<>(); // List of observers (clients)
@@ -51,6 +52,7 @@ public class Server implements Observable {
     @Override
     public void addObserver(Observer observer) {
         observers.add(observer);  // Add client as an observer
+        observer.update("PLAYER_REQUEST");
     }
 
     @Override
@@ -84,6 +86,7 @@ public class Server implements Observable {
                 while (true) {
                     //Read object from client
                     Object clientMessage = input.readObject();
+                    Class<?> debuggclass = clientMessage.getClass();
                     //If object is a string
                     if (clientMessage instanceof String message) {
                         //If incoming message is an answer to a name request
@@ -91,10 +94,10 @@ public class Server implements Observable {
                             removePlayerFromList(message);
                         } else {
                             System.out.println("Received string from client: " + message);
-                        notifyObservers(message);
+                            notifyObservers(message);
                         }
                     //If object is client's currentPlayer
-                    } else if (clientMessage instanceof IPlayer clientPlayer) {
+                    } else if (clientMessage instanceof Player clientPlayer) {
                         System.out.println("Received player from client: " + clientPlayer.getName());
                         //Add to players if not found, replace old version if found
                         addPlayers(clientPlayer);
@@ -172,7 +175,7 @@ public class Server implements Observable {
         if(playerIndex == -1)
         {
             //Add at the end
-            players.add((players.size() -1), clientPlayer);
+            players.add(clientPlayer);
             notifyObservers("New Player: " + clientPlayer.getName() + " connected!");
         }
         else
