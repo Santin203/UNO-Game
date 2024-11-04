@@ -32,6 +32,7 @@ public class ClientGUI {
     private JSplitPane mainPane;
 
     private IPlayer clientPlayer;
+    private ArrayList<Integer> playableIndexes = new ArrayList<>(){};
     public Client client;
     private Map<String, Integer> playerInfo = new HashMap<>();
 
@@ -98,6 +99,12 @@ public class ClientGUI {
                     .getScaledInstance(32, 48, Image.SCALE_SMOOTH)));
             button.setPreferredSize(new Dimension(64, 96));
             button.setBackground(new Color(0, 0, 0));
+            if(!playableIndexes.isEmpty()) {
+                if(!playableIndexes.contains(i)) {
+                    button.setEnabled(false);
+                }
+            }
+
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -184,8 +191,8 @@ public class ClientGUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (client != null) {
-                    unoButton.setVisible(false);
-                    unoButton.setEnabled(false);
+                    challengeUnoButton.setVisible(false);
+                    challengeUnoButton.setEnabled(false);
                     //Send action to server
                 }
             }
@@ -204,8 +211,6 @@ public class ClientGUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (client != null) {
-                    unoButton.setVisible(false);
-                    unoButton.setEnabled(false);
                     //Send action to server
                 }
             }
@@ -329,6 +334,7 @@ public class ClientGUI {
         messageArea.setEditable(false);
         messageArea.setBackground(new Color(0, 0, 0, 200));
         messageArea.setForeground(Color.WHITE);
+        messageArea.setPreferredSize(new Dimension(40,20));
         gamePanel.add(new JScrollPane(messageArea), BorderLayout.SOUTH);
     }
 
@@ -394,6 +400,11 @@ public class ClientGUI {
         gameCardsPanel.add(topCardPanel);
         frame.revalidate();
         frame.repaint();
+    }
+    
+    public void updatePlayableIndexes(ArrayList<Integer> serverPlayableIndexes) {
+        playableIndexes = serverPlayableIndexes;
+        updateCardsPanel();
     }
 
     private int getCardXCoordinates(ICard card) {

@@ -240,6 +240,12 @@ public class Server implements Observable {
         }
     }
 
+    public void sendPlayableIndexes(ArrayList<Integer> playableIndexes, String playerName) {
+        //Search Client in Observers dictionary by name
+        Observer observer = observers.get(playerName);
+        observer.update(playableIndexes);
+    }
+
     // Inner class for ClientObserver, implements Observer
     private class ClientObserver implements Observer {
         private ObjectOutputStream output;

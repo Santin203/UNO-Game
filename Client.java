@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 
@@ -70,6 +71,9 @@ public class Client implements Observer {
         }
         else if(message instanceof ICard topCard) {
             gui.updateTopCard(topCard);
+        }
+        else if(message instanceof ArrayList<?>) {
+            gui.updatePlayableIndexes((ArrayList<Integer>) message);
         }
         // Update GUI with messages from the server
     }
