@@ -21,10 +21,13 @@ public class ClientGUI {
     private JPanel cardsPanel;
     private JPanel playersPanel;
     private JPanel topCardPanel;
+    private JPanel gameCardsPanel;
     private JScrollPane cardsScrollPane;
     private JScrollPane playerScrollPane;
     private JButton startButton;
     private JButton unoButton;
+    private JButton challengeUnoButton;
+    private JButton pickCardButton;
     private JTextArea messageArea;
     private JSplitPane mainPane;
 
@@ -45,11 +48,10 @@ public class ClientGUI {
         createCardsPanel();
         cardsScrollPane = createScrollablePane(cardsPanel, false, 0, 0);
         createHandPanel(buttonPanel, cardsScrollPane);
+
         createUnoButton();
-        
-        buttonPanel.add(unoButton);
-        startButton = createStartButton();
-        buttonPanel.add(startButton);
+        createStartButton();
+        createChallengeUnoButton();
 
         startButton.addActionListener(new ActionListener() {
             @Override
@@ -78,6 +80,8 @@ public class ClientGUI {
         playerScrollPane = createScrollablePane(playersPanel, true, 300, 200);
 
         createGamePanel();
+        createGameCardsPanel();
+        createPickCardButton();
         createTopCardPanel(null);
         createMessageArea();
         gamePanel.add(playerScrollPane, BorderLayout.EAST);
@@ -97,6 +101,7 @@ public class ClientGUI {
 
     private void createCardsPanel() {
         cardsPanel = new JPanel(new GridBagLayout());
+        cardsPanel.setBackground(new Color(191, 11, 17));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(2, 2, 2, 2);
         gbc.fill = GridBagConstraints.NONE;
@@ -145,16 +150,35 @@ public class ClientGUI {
 
     private void createUnoButton() {
         unoButton = new JButton("UNO!");
-        formatButton(unoButton, 60, 30, new Color(196, 30, 30), Color.BLACK);
+        formatButton(unoButton, 60, 30, new Color(196, 30, 30), new Color(255, 180, 19));
         unoButton.setVisible(false);
         unoButton.setEnabled(false);
+        buttonPanel.add(unoButton);
     }
 
-    private JButton createStartButton() {
-        JButton button = new JButton("Start Game");
-        formatButton(button, 80, 40, new Color(196, 30, 30), new Color(255, 180, 19));
-        button.setEnabled(false);
-        return button;
+    private void createStartButton() {
+        startButton = new JButton("Start Game");
+        formatButton(startButton, 80, 40, new Color(196, 30, 30), new Color(255, 180, 19));
+        startButton.setEnabled(false);
+        buttonPanel.add(startButton);
+    }
+
+    private void createChallengeUnoButton() {
+        challengeUnoButton = new JButton("Punish UNO");
+        formatButton(challengeUnoButton, 80, 40, new Color(196, 30, 30), new Color(255, 180, 19));
+        challengeUnoButton.setVisible(false);
+        challengeUnoButton.setEnabled(false);
+        buttonPanel.add(challengeUnoButton);
+    }
+
+    private void createPickCardButton() {
+        BufferedImage spriteSheet = openImage("UNO_Cards.png");
+
+        JButton button = new JButton(new ImageIcon(spriteSheet.getSubimage(320, 192, 32, 48)));
+        button.setPreferredSize(new Dimension(64, 96));
+        button.setBackground(new Color(0, 0, 0));
+        pickCardButton = button;
+        gameCardsPanel.add(pickCardButton, BorderLayout.NORTH);
     }
 
     private void formatButton(JButton button, int width, int height, Color bgColor, Color fgColor) {
@@ -218,7 +242,7 @@ public class ClientGUI {
     private void createTopCardPanel(ICard card) {
         topCardPanel = new JPanel(new BorderLayout());
         topCardPanel.setPreferredSize(new Dimension(64, 136));
-        topCardPanel.setBackground(new Color(24, 24, 24));
+        topCardPanel.setBackground(new Color(191, 11, 17));
         BufferedImage spriteSheet = openImage("UNO_Cards.png");
         JLabel imageLabel;
         if(card == null) {
@@ -231,7 +255,14 @@ public class ClientGUI {
                 .getScaledInstance(64, 96, Image.SCALE_SMOOTH)));
         }
         topCardPanel.add(imageLabel);
-        gamePanel.add(topCardPanel);
+        gameCardsPanel.add(topCardPanel, BorderLayout.CENTER);
+    }
+
+    private void createGameCardsPanel() {
+        gameCardsPanel = new JPanel(new BorderLayout());
+        gameCardsPanel.setPreferredSize(new Dimension(64, 136));
+        gameCardsPanel.setBackground(new Color(191, 11, 17));
+        gamePanel.add(gameCardsPanel, BorderLayout.CENTER);
     }
 
     private void createMainPane(JPanel handPanel, JPanel gamePanel) {
@@ -327,9 +358,9 @@ public class ClientGUI {
     }
 
     public void updateTopCard(ICard topCard) {
-        gamePanel.remove(topCardPanel);
+        gameCardsPanel.remove(topCardPanel);
         createTopCardPanel(topCard);
-        gamePanel.add(topCardPanel);
+        gameCardsPanel.add(topCardPanel);
         frame.revalidate();
         frame.repaint();
     }
