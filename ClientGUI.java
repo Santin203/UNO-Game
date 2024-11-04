@@ -53,29 +53,6 @@ public class ClientGUI {
         createStartButton();
         createChallengeUnoButton();
 
-        startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (client != null) {
-                    startButton.setVisible(false);
-                    startButton.setEnabled(false);
-                    Boolean startSignal = true;
-                    client.sendToServer(startSignal);
-                }
-            }
-        });
-
-        unoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (client != null) {
-                    unoButton.setVisible(false);
-                    unoButton.setEnabled(false);
-                    clientPlayer.setStatus(2);
-                }
-            }
-        });
-
         createPlayerGrid();
         playerScrollPane = createScrollablePane(playersPanel, true, 300, 200);
 
@@ -121,6 +98,16 @@ public class ClientGUI {
                     .getScaledInstance(32, 48, Image.SCALE_SMOOTH)));
             button.setPreferredSize(new Dimension(64, 96));
             button.setBackground(new Color(0, 0, 0));
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (client != null) {
+                        unoButton.setVisible(false);
+                        unoButton.setEnabled(false);
+                        //Send action to server
+                    }
+                }
+            });
             gbc.gridx = i % 3;
             gbc.gridy = i / 3;
             cardsPanel.add(button, gbc);
@@ -154,6 +141,17 @@ public class ClientGUI {
         unoButton.setVisible(false);
         unoButton.setEnabled(false);
         buttonPanel.add(unoButton);
+
+        unoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (client != null) {
+                    unoButton.setVisible(false);
+                    unoButton.setEnabled(false);
+                    //Send action to server
+                }
+            }
+        });
     }
 
     private void createStartButton() {
@@ -161,6 +159,18 @@ public class ClientGUI {
         formatButton(startButton, 80, 40, new Color(196, 30, 30), new Color(255, 180, 19));
         startButton.setEnabled(false);
         buttonPanel.add(startButton);
+
+        startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (client != null) {
+                    startButton.setVisible(false);
+                    startButton.setEnabled(false);
+                    Boolean startSignal = true;
+                    client.sendToServer(startSignal);
+                }
+            }
+        });
     }
 
     private void createChallengeUnoButton() {
@@ -169,16 +179,37 @@ public class ClientGUI {
         challengeUnoButton.setVisible(false);
         challengeUnoButton.setEnabled(false);
         buttonPanel.add(challengeUnoButton);
+
+        challengeUnoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (client != null) {
+                    unoButton.setVisible(false);
+                    unoButton.setEnabled(false);
+                    //Send action to server
+                }
+            }
+        });
     }
 
     private void createPickCardButton() {
         BufferedImage spriteSheet = openImage("UNO_Cards.png");
 
-        JButton button = new JButton(new ImageIcon(spriteSheet.getSubimage(320, 192, 32, 48)));
-        button.setPreferredSize(new Dimension(64, 96));
-        button.setBackground(new Color(0, 0, 0));
-        pickCardButton = button;
+        pickCardButton = new JButton(new ImageIcon(spriteSheet.getSubimage(320, 192, 32, 48)));
+        pickCardButton.setPreferredSize(new Dimension(64, 96));
+        pickCardButton.setBackground(new Color(0, 0, 0));
         gameCardsPanel.add(pickCardButton, BorderLayout.NORTH);
+
+        pickCardButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (client != null) {
+                    unoButton.setVisible(false);
+                    unoButton.setEnabled(false);
+                    //Send action to server
+                }
+            }
+        });
     }
 
     private void formatButton(JButton button, int width, int height, Color bgColor, Color fgColor) {
