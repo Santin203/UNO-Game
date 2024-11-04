@@ -37,7 +37,7 @@ public class Game implements IGame {
         setupGamePile();
         dealInitialCards();
         gameServer.sendPlayers(players);
-
+        gameServer.sendTopPlayCard(discardPile.getTopCard());
 
         //Game loop
         while(true)
@@ -45,7 +45,7 @@ public class Game implements IGame {
             checkFewCardsDeck();
             currentPlayer = players.get(playerIndex);
             nextTurn();
-            
+            //gameServer.sendTopPlayCard(discardPile.getTopCard());
             //If current player has no more cards
             if(currentPlayer.checkStatus() == 1)
             {

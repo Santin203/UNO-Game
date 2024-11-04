@@ -68,6 +68,9 @@ public class Client implements Observer {
                 e.printStackTrace();
             }
         }
+        else if(message instanceof ICard topCard) {
+            gui.updateTopCard(topCard);
+        }
         // Update GUI with messages from the server
     }
 

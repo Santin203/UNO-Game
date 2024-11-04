@@ -4,9 +4,9 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -14,14 +14,23 @@ import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 public class ClientGUI {
-    private JFrame frame ;
+    private JFrame frame;
     private JPanel gamePanel;
     private JPanel handPanel;
-    private JButton startButton;    
-    private IPlayer clientPlayer;
+    private JPanel buttonPanel;
+    private JPanel cardsPanel;
+    private JPanel playersPanel;
+    private JPanel topCardPanel;
+    private JScrollPane cardsScrollPane;
+    private JScrollPane playerScrollPane;
+    private JButton startButton;
+    private JButton unoButton;
     private JTextArea messageArea;
-    public Client client;  
-    private Map<String, Integer> playerInfo = new HashMap<>() ;
+    private JSplitPane mainPane;
+
+    private IPlayer clientPlayer;
+    public Client client;
+    private Map<String, Integer> playerInfo = new HashMap<>();
 
     public ClientGUI(Client client, IPlayer player) {
         this.client = client;
@@ -32,17 +41,16 @@ public class ClientGUI {
     private void initializeGUI() {
         createFrame();
         
-        JPanel buttonPanel = createButtonPanel();
-        JPanel cardsPanel = createCardsPanel();
-        JScrollPane cardsScrollPane = createScrollablePane(cardsPanel, false, 0, 0);
+        createButtonPanel();
+        createCardsPanel();
+        cardsScrollPane = createScrollablePane(cardsPanel, false, 0, 0);
         createHandPanel(buttonPanel, cardsScrollPane);
-        JButton unoButton = createUnoButton();
+        createUnoButton();
         
         buttonPanel.add(unoButton);
         startButton = createStartButton();
         buttonPanel.add(startButton);
 
-        // Add action listener to start button
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -50,19 +58,31 @@ public class ClientGUI {
                     startButton.setVisible(false);
                     startButton.setEnabled(false);
                     Boolean startSignal = true;
-                    client.sendToServer(startSignal);  // Send start signal to server
+                    client.sendToServer(startSignal);
                 }
             }
         });
 
-        JPanel playerPanel = createPlayerGrid();
-        JScrollPane playerScrollPane = createScrollablePane(playerPanel, true, 300, 200);
+        unoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (client != null) {
+                    unoButton.setVisible(false);
+                    unoButton.setEnabled(false);
+                    clientPlayer.setStatus(2);
+                }
+            }
+        });
+
+        createPlayerGrid();
+        playerScrollPane = createScrollablePane(playersPanel, true, 300, 200);
 
         createGamePanel();
-        setMessageArea();
+        createTopCardPanel(null);
+        createMessageArea();
         gamePanel.add(playerScrollPane, BorderLayout.EAST);
 
-        JSplitPane mainPane = createMainPane(handPanel, gamePanel);
+        createMainPane(handPanel, gamePanel);
         frame.add(mainPane, BorderLayout.CENTER);
         frame.setVisible(true);
     }
@@ -75,8 +95,8 @@ public class ClientGUI {
         frame.setIconImage(openImage("UNO_Cards.png").getSubimage(320, 192, 32, 48));
     }
 
-    private JPanel createCardsPanel() {
-        JPanel cardsPanel = new JPanel(new GridBagLayout());
+    private void createCardsPanel() {
+        cardsPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(2, 2, 2, 2);
         gbc.fill = GridBagConstraints.NONE;
@@ -84,9 +104,8 @@ public class ClientGUI {
 
         ArrayList<ICard> currentHand = clientPlayer.getHand();
 
-        //If player isn't initialized
-        if(currentHand.isEmpty()) {
-            return cardsPanel;
+        if (currentHand.isEmpty()) {
+            return;
         }
 
         BufferedImage spriteSheet = openImage("UNO_Cards.png");
@@ -101,22 +120,20 @@ public class ClientGUI {
             gbc.gridy = i / 3;
             cardsPanel.add(button, gbc);
         }
-        return cardsPanel;
     }
 
-    private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel();
+    private void createButtonPanel() {
+        buttonPanel = new JPanel();
         buttonPanel.setBackground(Color.BLACK);
         buttonPanel.setPreferredSize(new Dimension(300, 100));
-        return buttonPanel;
     }
 
     private JScrollPane createScrollablePane(JPanel panel, boolean customSize, int height, int width) {
-        JScrollPane contentScrollPane = new JScrollPane(panel);
-        contentScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        contentScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        contentScrollPane.setPreferredSize(customSize ? new Dimension(width, height) : new Dimension(300, contentScrollPane.getPreferredSize().height));
-        return contentScrollPane;
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setPreferredSize(customSize ? new Dimension(width, height) : new Dimension(300, scrollPane.getPreferredSize().height));
+        return scrollPane;
     }
 
     private void createHandPanel(JPanel buttonPanel, JScrollPane contentScrollPane) {
@@ -126,19 +143,18 @@ public class ClientGUI {
         handPanel.add(contentScrollPane);
     }
 
-    private JButton createUnoButton() {
-        JButton unoButton = new JButton("UNO!");
+    private void createUnoButton() {
+        unoButton = new JButton("UNO!");
         formatButton(unoButton, 60, 30, new Color(196, 30, 30), Color.BLACK);
         unoButton.setVisible(false);
         unoButton.setEnabled(false);
-        return unoButton;
     }
 
     private JButton createStartButton() {
-        startButton = new JButton("Start Game");
-        formatButton(startButton, 80, 40, new Color(196, 30, 30), new Color(255, 180, 19));
-        startButton.setEnabled(false);
-        return startButton;
+        JButton button = new JButton("Start Game");
+        formatButton(button, 80, 40, new Color(196, 30, 30), new Color(255, 180, 19));
+        button.setEnabled(false);
+        return button;
     }
 
     private void formatButton(JButton button, int width, int height, Color bgColor, Color fgColor) {
@@ -154,8 +170,8 @@ public class ClientGUI {
         gamePanel.setBackground(new Color(123, 8, 12));
     }
 
-    private JPanel createPlayerGrid() {
-        JPanel playersPanel = new JPanel(new GridBagLayout());
+    private void createPlayerGrid() {
+        playersPanel = new JPanel(new GridBagLayout());
         playersPanel.setBackground(new Color(24, 24, 24));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(2, 2, 2, 2);
@@ -173,13 +189,12 @@ public class ClientGUI {
             playersPanel.add(playerPanel, gbc);
             i++;
         }
-        return playersPanel;
     }
 
     private JPanel createPlayerPanel(String playerName, int playerScore, BufferedImage spriteSheet) {
-        JPanel playerPanel = new JPanel(new BorderLayout());
-        playerPanel.setPreferredSize(new Dimension(64, 136));
-        playerPanel.setBackground(new Color(24, 24, 24));
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setPreferredSize(new Dimension(64, 136));
+        panel.setBackground(new Color(24, 24, 24));
         
         JLabel imageLabel = new JLabel(new ImageIcon(spriteSheet.getSubimage(320, 192, 32, 48)
                 .getScaledInstance(64, 96, Image.SCALE_SMOOTH)));
@@ -189,10 +204,10 @@ public class ClientGUI {
         formatLabel(numberLabel, new Font("Arial", Font.BOLD, 16), Color.RED);
         formatLabel(nameLabel, new Font("Arial", Font.PLAIN, 12), Color.WHITE);
         
-        playerPanel.add(numberLabel, BorderLayout.NORTH);
-        playerPanel.add(imageLabel, BorderLayout.CENTER);
-        playerPanel.add(nameLabel, BorderLayout.SOUTH);
-        return playerPanel;
+        panel.add(numberLabel, BorderLayout.NORTH);
+        panel.add(imageLabel, BorderLayout.CENTER);
+        panel.add(nameLabel, BorderLayout.SOUTH);
+        return panel;
     }
 
     private void formatLabel(JLabel label, Font font, Color color) {
@@ -200,8 +215,27 @@ public class ClientGUI {
         label.setForeground(color);
     }
 
-    private JSplitPane createMainPane(JPanel handPanel, JPanel gamePanel) {
-        JSplitPane mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, handPanel, gamePanel);
+    private void createTopCardPanel(ICard card) {
+        topCardPanel = new JPanel(new BorderLayout());
+        topCardPanel.setPreferredSize(new Dimension(64, 136));
+        topCardPanel.setBackground(new Color(24, 24, 24));
+        BufferedImage spriteSheet = openImage("UNO_Cards.png");
+        JLabel imageLabel;
+        if(card == null) {
+            imageLabel = new JLabel(new ImageIcon(spriteSheet.getSubimage(320, 192, 32, 48)
+                .getScaledInstance(64, 96, Image.SCALE_SMOOTH)));
+        } else {
+            int xCoordinates = getCardXCoordinates(card);
+            int yCoordinates = getCardYCoordinates(card);
+            imageLabel = new JLabel(new ImageIcon(spriteSheet.getSubimage(xCoordinates, yCoordinates, 32, 48)
+                .getScaledInstance(64, 96, Image.SCALE_SMOOTH)));
+        }
+        topCardPanel.add(imageLabel);
+        gamePanel.add(topCardPanel);
+    }
+
+    private void createMainPane(JPanel handPanel, JPanel gamePanel) {
+        mainPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, handPanel, gamePanel);
         mainPane.setResizeWeight(0.33);
         mainPane.setContinuousLayout(true);
         mainPane.setDividerSize(5);
@@ -217,7 +251,6 @@ public class ClientGUI {
                 };
             }
         });
-        return mainPane;
     }
 
     private BufferedImage openImage(String path) {
@@ -229,7 +262,7 @@ public class ClientGUI {
         }
     }
 
-    private void setMessageArea() {
+    private void createMessageArea() {
         messageArea = new JTextArea();
         messageArea.setEditable(false);
         messageArea.setBackground(new Color(0, 0, 0, 200));
@@ -248,11 +281,11 @@ public class ClientGUI {
         playerInfo = players;
 
         // Remove the old player panel
-        gamePanel.remove(1);
+        gamePanel.remove(playerScrollPane);
 
         // Recreate player panel with updated info
-        JPanel updatedPlayerPanel = createPlayerGrid();
-        JScrollPane playerScrollPane = createScrollablePane(updatedPlayerPanel, true, 300, 200);
+        createPlayerGrid();
+        playerScrollPane = createScrollablePane(playersPanel, true, 300, 200);
 
         // Add the updated player panel and messageArea to gamePanel
         gamePanel.add(playerScrollPane, BorderLayout.EAST);
@@ -280,15 +313,23 @@ public class ClientGUI {
 
     public void updateCardsPanel() {
         // Remove the old cards panel from handPanel
-        handPanel.remove(1); // Assuming cardsPanel is the second component in handPanel
+        handPanel.remove(cardsScrollPane); // Assuming cardsPanel is the second component in handPanel
     
         // Recreate the cards panel with the updated info
-        JPanel updatedCardsPanel = createCardsPanel();
-        JScrollPane updatedCardsScrollPane = createScrollablePane(updatedCardsPanel, false, 0, 0);
+        createCardsPanel();
+        cardsScrollPane = createScrollablePane(cardsPanel, false, 0, 0);
     
         // Add the updated cards panel back to handPanel
-        handPanel.add(updatedCardsScrollPane, BorderLayout.CENTER);
+        handPanel.add(cardsScrollPane, BorderLayout.CENTER);
         // Refresh the frame to display updates
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    public void updateTopCard(ICard topCard) {
+        gamePanel.remove(topCardPanel);
+        createTopCardPanel(topCard);
+        gamePanel.add(topCardPanel);
         frame.revalidate();
         frame.repaint();
     }
