@@ -145,7 +145,7 @@ public class Server implements Observable {
 
     private void startGame() {
         game = Game.getInstance(players);
-        game.setGameServer((IServer) instance);
+        game.setGameServer(instance);
         // Run the game on a new thread to allow continued message handling
         new Thread(() -> game.startGame()).start();
     }

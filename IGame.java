@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public interface IGame {
-    void setGameServer(IServer serverInstance);
+    void setGameServer(Server serverInstance);
     void startGame();
     void nextTurn();
     IDeck getDiscardDeck();

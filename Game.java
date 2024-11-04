@@ -10,7 +10,7 @@ public class Game implements IGame {
     private IPlayer previousPlayer;
     private int playerIndex;
     private int order;
-    private IServer gameServer;
+    private Server gameServer;
 
     public Game(ArrayList<IPlayer> players) {
         this.players = players;
@@ -28,7 +28,7 @@ public class Game implements IGame {
     }
 
     @Override
-    public void setGameServer(IServer serverInstance) {
+    public void setGameServer(Server serverInstance) {
         this.gameServer = serverInstance;
     }
 

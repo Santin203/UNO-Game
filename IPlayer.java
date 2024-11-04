@@ -9,7 +9,7 @@ public interface IPlayer {
     String getName();
     ArrayList<ICard> getHand();
     int getHandSize();
-    String getAction(List<String> options, IServer server);
+    String getAction(List<String> options, Server server);
     boolean hasPlayableCard(ICard topCard);
     ICard selectCardToPlay(ICard topCard);
     boolean needsToCallUno();

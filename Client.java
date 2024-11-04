@@ -1,7 +1,7 @@
 import java.io.*;
 import java.net.*;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -87,12 +87,13 @@ public class Client implements Observer {
                 this.notify();
             }
         }
-        else {
-            System.out.println("Received unknown message from server: " + message);
-        }
         else if(message instanceof ArrayList<?>) {
             gui.updatePlayableIndexes((ArrayList<Integer>) message);
         }
+        else {
+            System.out.println("Received unknown message from server: " + message);
+        }
+
         // Update GUI with messages from the server
     }
 

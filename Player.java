@@ -71,7 +71,7 @@ public class Player implements IPlayer, Serializable {
     }
 
     @Override
-    public String getAction(List<String> options, IServer server) {        
+    public String getAction(List<String> options, Server server) {        
         return server.getPlayerAction(this, options);
     }
 
