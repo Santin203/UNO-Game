@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
@@ -10,6 +11,7 @@ public class Client implements Observer {
     private ObjectOutputStream output;
     private IPlayer currentPlayer;
     private ClientGUI gui;
+    private String lastAction;  // Store last action chosen by the client
 
     public Client(String address, int port, ClientGUI gui, IPlayer player) {
         this.gui = gui;  // Reference to the GUI
@@ -72,6 +74,22 @@ public class Client implements Observer {
         else if(message instanceof ICard topCard) {
             gui.updateTopCard(topCard);
         }
+        else if(message instanceof List<?> options) {
+            // Prompt the player and get the action
+            String action = gui.promptAction((List<String>) options);
+            lastAction = action;  // Store the chosen action
+
+            // Send the selected action back to the server
+            sendToServer(action);
+
+            // Notify the server that the action has been set
+            synchronized(this) {
+                this.notify();
+            }
+        }
+        else {
+            System.out.println("Received unknown message from server: " + message);
+        }
         else if(message instanceof ArrayList<?>) {
             gui.updatePlayableIndexes((ArrayList<Integer>) message);
         }
@@ -103,6 +121,10 @@ public class Client implements Observer {
         Client client = new Client("localhost", 12345, gui, player);  // Pass GUI and Player to client
 
         gui.client = client;  // Link client to the GUI
+    }
+
+    public String getLastAction() {
+        return lastAction;
     }
 
     private static String generateUserId() {

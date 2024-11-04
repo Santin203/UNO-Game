@@ -472,7 +472,7 @@ public class ClientGUI {
         return selectedColor != null ? selectedColor.toLowerCase() : null;
     }
 
-    public String showActionOptions(List<String> options) {
+    public String promptAction(List<String> options) {
         String selectedAction = (String) JOptionPane.showInputDialog(
             frame,
             "Choose an action:",

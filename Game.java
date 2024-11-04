@@ -10,7 +10,7 @@ public class Game implements IGame {
     private IPlayer previousPlayer;
     private int playerIndex;
     private int order;
-    private Server gameServer;
+    private IServer gameServer;
 
     public Game(ArrayList<IPlayer> players) {
         this.players = players;
@@ -20,7 +20,7 @@ public class Game implements IGame {
         this.gameServer = null;
     }
 
-    public static Game getInstance(ArrayList<IPlayer> players) {
+    public static IGame getInstance(ArrayList<IPlayer> players) {
         if (instance == null) {
             instance = new Game(players);
         }
@@ -28,7 +28,7 @@ public class Game implements IGame {
     }
 
     @Override
-    public void setGameServer(Server serverInstance) {
+    public void setGameServer(IServer serverInstance) {
         this.gameServer = serverInstance;
     }
 
@@ -109,7 +109,7 @@ public class Game implements IGame {
         gameServer.sendPlayableIndexes(playableIndexes, currentPlayer.getName());
 
         //Get action from player
-        String action = currentPlayer.getAction(options);
+        String action = currentPlayer.getAction(options, gameServer);
 
         //Execute action from player
         switch(action)
