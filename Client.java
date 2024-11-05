@@ -1,7 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -74,26 +72,6 @@ public class Client implements Observer {
         else if(message instanceof ICard topCard) {
             gui.updateTopCard(topCard);
         }
-        else if(message instanceof List<?> options) {
-            // Prompt the player and get the action
-            String action = gui.promptAction((List<String>) options);
-            lastAction = action;  // Store the chosen action
-
-            // Send the selected action back to the server
-            sendToServer(action);
-
-            // Notify the server that the action has been set
-            synchronized(this) {
-                this.notify();
-            }
-        }
-        else if(message instanceof ArrayList<?>) {
-            gui.updatePlayableIndexes((ArrayList<Integer>) message);
-        }
-        else {
-            System.out.println("Received unknown message from server: " + message);
-        }
-
         // Update GUI with messages from the server
     }
 

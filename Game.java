@@ -44,7 +44,6 @@ public class Game implements IGame {
         {
             checkFewCardsDeck();
             currentPlayer = players.get(playerIndex);
-            gameServer.notifyObservers("Player: " +currentPlayer.getName()+ " has started it's turn");
             nextTurn();
             //gameServer.sendTopPlayCard(discardPile.getTopCard());
             //If current player has no more cards
@@ -106,7 +105,6 @@ public class Game implements IGame {
 
         //Get indexes of playable cards (for ui)
         ArrayList<Integer> playableIndexes = getPlayableIndexes(currentHand, topCard);
-        gameServer.sendPlayableIndexes(playableIndexes, currentPlayer.getName());
 
         //Get action from player
         String action = currentPlayer.getAction(options, gameServer);

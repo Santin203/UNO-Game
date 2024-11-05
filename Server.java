@@ -2,7 +2,6 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 // Singleton Server class
@@ -239,46 +238,6 @@ public class Server implements Observable {
             Observer observer = entry.getValue();
             observer.update(card);
         }
-    }
-
-    public String getPlayerAction(IPlayer player, List<String> options) {
-        try {
-            // Find observer based on player name
-            Client client = findObserver(player);
-    
-            if (client != null) {
-                // Send action options to the client
-                client.sendToServer(options);
-    
-                // Wait for client to respond with chosen action
-                synchronized(client) {  // Synchronize to wait for the response
-                    client.wait();  // Wait for notification from client after response
-                }
-                return client.getLastAction();  // Retrieve the client's last chosen action
-            } else {
-                System.out.println("Observer not found for player: " + player.getName());
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public Client findObserver(IPlayer player) {
-        Observer observer = observers.get(player.getName());
-        if (observer instanceof Client) {
-            return (Client) observer;
-        } else {
-            System.out.println("Observer is not a Client for player: " + player.getName());
-            return null;
-        }
-    }
-
-    public void sendPlayableIndexes(ArrayList<Integer> playableIndexes, String playerName) {
-        //Search Client in Observers dictionary by name
-        Observer observer = observers.get(playerName);
-        observer.update(playableIndexes);
     }
 
     // Inner class for ClientObserver, implements Observer
