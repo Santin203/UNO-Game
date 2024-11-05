@@ -222,6 +222,20 @@ public class Server implements Observable {
     public void updatePlayer() {
         
     }
+
+    public void sendPlayableIndexes(ArrayList<Integer> playableIndexes, String playerName) {
+        //Search Client in Observers dictionary by name
+        Observer observer = observers.get(playerName);
+        observer.update(playableIndexes);
+        List<Integer> disabledArray = new ArrayList<Integer>();
+        disabledArray.add(-1);
+        for(String observerName: observers.keySet()) {
+            if(!(observerName.equals(playerName))) {
+                Observer notCurrentPlayer = observers.get(observerName);
+                notCurrentPlayer.update(disabledArray);
+            }
+        }
+    }
     
     public void sendPlayers(ArrayList<IPlayer> players) {
         for(var entry: observers.entrySet()) {

@@ -34,6 +34,7 @@ public class ClientGUI {
     private IPlayer clientPlayer;
     public Client client;
     private Map<String, Integer> playerInfo = new HashMap<>();
+    private ArrayList<Integer> playableIndexes = new ArrayList<>(){};
 
     public ClientGUI(Client client, IPlayer player) {
         this.client = client;
@@ -99,6 +100,15 @@ public class ClientGUI {
                     .getScaledInstance(32, 48, Image.SCALE_SMOOTH)));
             button.setPreferredSize(new Dimension(64, 96));
             button.setBackground(new Color(0, 0, 0));
+            if(!playableIndexes.isEmpty()) {
+                if(playableIndexes.contains(-1))
+                {
+                    button.setEnabled(false);
+                }
+                else if(!playableIndexes.contains(i)) {
+                    button.setEnabled(false);
+                }
+            }
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -393,6 +403,11 @@ public class ClientGUI {
         // Refresh the frame to display updates
         frame.revalidate();
         frame.repaint();
+    }
+
+    public void updatePlayableIndexes(ArrayList<Integer> serverPlayableIndexes) {
+        playableIndexes = serverPlayableIndexes;
+        updateCardsPanel();
     }
 
     public void updateTopCard(ICard topCard) {

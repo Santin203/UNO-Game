@@ -104,8 +104,9 @@ public class Game implements IGame {
         ArrayList<Integer> playableIndexes = getPlayableIndexes(currentHand, topCard);
         
         // Define player's options for current turn
-        List<String> options = getAvailableOptions(playableIndexes);
-
+        List<String> options = getAvailableOptions();
+        //Send current player its playable indexes
+        gameServer.sendPlayableIndexes(playableIndexes, currentPlayer.getName());
         //Get action from player
         String action = currentPlayer.getAction(options, gameServer);
 
@@ -129,15 +130,15 @@ public class Game implements IGame {
 
     }
 
-    private List<String> getAvailableOptions(ArrayList<Integer> playableIndexes) {
+    private List<String> getAvailableOptions() {
         List<String> options = new ArrayList<>();
         if (currentPlayer.hasPlayableCard(discardPile.getTopCard())) {
             options.add("playCard");
         }
-        if (playableIndexes.isEmpty()) {
-            options.add("pickCard");
+        options.add("pickCard");
+        if (currentPlayer.getHandSize() == 2) {
+            options.add("callUno");
         }
-        options.add("callUno");
         return options;
     }
 

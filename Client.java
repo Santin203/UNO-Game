@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -74,7 +75,16 @@ public class Client implements Observer {
             gui.updateTopCard(topCard);
         }
         else if (message instanceof List<?> options) {
-            gui.updateActionButtons((List<String>) options);
+            // Determine type based on the first element if available
+            Object firstElement = options.get(0);
+            if (firstElement instanceof Integer) {
+                ArrayList<Integer> playableIndexes = new ArrayList<Integer>((List<Integer>)options);
+                gui.updatePlayableIndexes(playableIndexes);
+            } else if (firstElement instanceof String) {
+                gui.updateActionButtons((List<String>) options);
+            } else {
+                System.err.println("List type is unknown");
+            }
         }
         // Update GUI with messages from the server
     }
