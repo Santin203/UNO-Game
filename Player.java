@@ -87,13 +87,8 @@ public class Player implements IPlayer, Serializable {
     }
 
     @Override
-    public ICard selectCardToPlay(ICard topCard) {
-        for (ICard card : hand) {
-            if (card.canBePlayed(topCard)) {
-                return card; // Returns first playable card; adjust as needed for player choice
-            }
-        }
-        return null; // No playable card
+    public ICard selectCardToPlay(ICard topCard, Server server) {
+        return server.card;
     }
 
     @Override

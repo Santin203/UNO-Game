@@ -175,7 +175,7 @@ public class Game implements IGame {
     }
 
     private void handlePlayCard(ICard topCard) {
-        ICard cardToPlay = currentPlayer.selectCardToPlay(topCard);
+        ICard cardToPlay = currentPlayer.selectCardToPlay(topCard, gameServer);
         if (cardToPlay != null) {
             currentPlayer.playCard(cardToPlay, this);
         }

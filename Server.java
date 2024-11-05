@@ -14,7 +14,7 @@ public class Server implements Observable {
     private ServerSocket serverSocket;
     private Map<String, Observer> observers = new HashMap<>(); // Dictionary of observers (clients) and player names
     private String lastAction;  // Store last action chosen by the client
-    private ICard card;
+    public ICard card;
 
     // Private constructor (Singleton)
     private Server(int port) throws IOException {
@@ -256,14 +256,13 @@ public class Server implements Observable {
 
         observer.update(options);  // Send options to the client
         // Synchronize and wait for client's response
-        synchronized(this) {
-            try {
-                this.wait();  // Wait for the client to notify with the selected action
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
+        // synchronized(this) {
+        //     try {
+        //         this.wait();  // Wait for the client to notify with the selected action
+        //     } catch (InterruptedException e) {
+        //         e.printStackTrace();
+        //     }
+        // }
         return lastAction;
     }
     

@@ -11,7 +11,7 @@ public interface IPlayer {
     int getHandSize();
     String getAction(List<String> options, Server server);
     boolean hasPlayableCard(ICard topCard);
-    ICard selectCardToPlay(ICard topCard);
+    ICard selectCardToPlay(ICard topCard, Server server);
     boolean needsToCallUno();
     void callUno();
     boolean hasCalledUno();
