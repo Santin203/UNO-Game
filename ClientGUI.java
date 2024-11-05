@@ -94,6 +94,7 @@ public class ClientGUI {
         for (int i = 0; i < currentHand.size(); i++) {
             int xCoordinates = getCardXCoordinates(currentHand.get(i));
             int yCoordinates = getCardYCoordinates(currentHand.get(i));
+            ICard card = currentHand.get(i);
             JButton button = new JButton(new ImageIcon(spriteSheet.getSubimage(xCoordinates, yCoordinates, 32, 48)
                     .getScaledInstance(32, 48, Image.SCALE_SMOOTH)));
             button.setPreferredSize(new Dimension(64, 96));
@@ -102,9 +103,10 @@ public class ClientGUI {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (client != null) {
-                        unoButton.setVisible(false);
-                        unoButton.setEnabled(false);
+                        button.setVisible(false);
+                        button.setEnabled(false);
                         //Send action to server
+                        client.actionSelected("playCard", card);
                     }
                 }
             });
@@ -146,9 +148,10 @@ public class ClientGUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (client != null) {
-                    unoButton.setVisible(false);
-                    unoButton.setEnabled(false);
+                    // unoButton.setVisible(false);
+                    // unoButton.setEnabled(false);
                     //Send action to server
+                    client.actionSelected("callUno", null);
                 }
             }
         });
@@ -184,9 +187,10 @@ public class ClientGUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (client != null) {
-                    unoButton.setVisible(false);
-                    unoButton.setEnabled(false);
+                    // unoButton.setVisible(false);
+                    // unoButton.setEnabled(false);
                     //Send action to server
+                    client.actionSelected("callUno", null);
                 }
             }
         });
@@ -198,15 +202,18 @@ public class ClientGUI {
         pickCardButton = new JButton(new ImageIcon(spriteSheet.getSubimage(320, 192, 32, 48)));
         pickCardButton.setPreferredSize(new Dimension(64, 96));
         pickCardButton.setBackground(new Color(0, 0, 0));
+        pickCardButton.setVisible(false);
+        pickCardButton.setEnabled(false);
         gameCardsPanel.add(pickCardButton, BorderLayout.NORTH);
 
         pickCardButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (client != null) {
-                    unoButton.setVisible(false);
-                    unoButton.setEnabled(false);
+                    // pickCardButton.setVisible(false);
+                    // pickCardButton.setEnabled(false);
                     //Send action to server
+                    client.actionSelected("pickCard", null);
                 }
             }
         });
@@ -396,6 +403,15 @@ public class ClientGUI {
         frame.repaint();
     }
 
+    public void updateActionButtons(List<String> options) {
+        // Enable or gray out buttons based on options list
+        unoButton.setEnabled(options.contains("callUno"));
+        unoButton.setVisible(options.contains("callUno"));
+        pickCardButton.setEnabled(options.contains("pickCard"));
+        pickCardButton.setVisible(options.contains("pickCard"));
+    }
+    
+
     private int getCardXCoordinates(ICard card) {
         int coordinates = 0;
         if(card instanceof NumberDecorator numberDecorator) {
@@ -459,19 +475,6 @@ public class ClientGUI {
         );
 
         return selectedColor != null ? selectedColor.toLowerCase() : null;
-    }
-
-    public String promptAction(List<String> options) {
-        String selectedAction = (String) JOptionPane.showInputDialog(
-            frame,
-            "Choose an action:",
-            "Select Action",
-            JOptionPane.PLAIN_MESSAGE,
-            null,
-            options.toArray(),
-            options.get(0)  // Default to the first option
-        );
-        return selectedAction;
     }
 
     // Method to trigger when a ChangeColor card is played

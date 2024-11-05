@@ -45,7 +45,7 @@ public class Game implements IGame {
             checkFewCardsDeck();
             currentPlayer = players.get(playerIndex);
             nextTurn();
-            //gameServer.sendTopPlayCard(discardPile.getTopCard());
+            gameServer.sendTopPlayCard(discardPile.getTopCard());
             //If current player has no more cards
             if(currentPlayer.checkStatus() == 1)
             {
@@ -99,12 +99,12 @@ public class Game implements IGame {
     public void nextTurn() {
         ArrayList<ICard> currentHand = currentPlayer.getHand();
         ICard topCard = discardPile.getTopCard();
+
+        //Get indexes of playable cards
+        ArrayList<Integer> playableIndexes = getPlayableIndexes(currentHand, topCard);
         
         // Define player's options for current turn
-        List<String> options = getAvailableOptions();
-
-        //Get indexes of playable cards (for ui)
-        ArrayList<Integer> playableIndexes = getPlayableIndexes(currentHand, topCard);
+        List<String> options = getAvailableOptions(playableIndexes);
 
         //Get action from player
         String action = currentPlayer.getAction(options, gameServer);
@@ -129,13 +129,14 @@ public class Game implements IGame {
 
     }
 
-    private List<String> getAvailableOptions() {
+    private List<String> getAvailableOptions(ArrayList<Integer> playableIndexes) {
         List<String> options = new ArrayList<>();
         if (currentPlayer.hasPlayableCard(discardPile.getTopCard())) {
             options.add("playCard");
         }
-
-        options.add("pickCard");
+        if (playableIndexes.isEmpty()) {
+            options.add("pickCard");
+        }
         options.add("callUno");
         return options;
     }

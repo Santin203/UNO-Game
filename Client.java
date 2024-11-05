@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -72,7 +73,27 @@ public class Client implements Observer {
         else if(message instanceof ICard topCard) {
             gui.updateTopCard(topCard);
         }
+        else if (message instanceof List<?> options) {
+            gui.updateActionButtons((List<String>) options);
+        }
         // Update GUI with messages from the server
+    }
+
+    public void actionSelected(String action, ICard card) {
+        lastAction = action;
+    
+        // If a card is selected for playCard, include the card in the message
+        if (action.equals("playCard") && card != null) {
+            sendToServer(action);
+            sendToServer(card);
+        } else {
+            sendToServer(action);  // Send only the action for other types
+        }
+    
+        // Notify the server that the action is ready
+        synchronized(this) {
+            this.notify();
+        }
     }
 
     private class ServerListener implements Runnable {

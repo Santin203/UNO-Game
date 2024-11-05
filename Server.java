@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // Singleton Server class
@@ -12,6 +13,8 @@ public class Server implements Observable {
     private IGame game;
     private ServerSocket serverSocket;
     private Map<String, Observer> observers = new HashMap<>(); // Dictionary of observers (clients) and player names
+    private String lastAction;  // Store last action chosen by the client
+    private ICard card;
 
     // Private constructor (Singleton)
     private Server(int port) throws IOException {
@@ -107,6 +110,11 @@ public class Server implements Observable {
                             String playerName = message.replace("NAME_REQUEST","").trim();
                             observers.put(playerName, clientObserver);
                             clientObserver.update("PLAYER_REQUEST");    //Request player instance from client
+                        } else if (message.contains("playCard") || message.contains("pickCard") || message.contains("callUno")) {
+                            //notifyObservers(message);
+                            System.out.println("Received action from client: " + message);
+                            lastAction = message;
+
                         } else {
                             System.out.println("Received string from client: " + message);
                             notifyObservers(message);
@@ -122,6 +130,9 @@ public class Server implements Observable {
                     } else if (clientMessage instanceof Boolean) {
                         notifyObservers("Game has started!");
                         startGame();
+                    } else if (clientMessage instanceof ICard){
+                        card = (ICard) clientMessage;
+                        System.out.println("Received card from client: " + card);
                     }
                         
                 }
@@ -239,6 +250,23 @@ public class Server implements Observable {
             observer.update(card);
         }
     }
+
+    public String getPlayerAction(IPlayer player, List<String> options) {
+        ClientObserver observer = (ClientObserver) observers.get(player.getName());
+
+        observer.update(options);  // Send options to the client
+        // Synchronize and wait for client's response
+        synchronized(this) {
+            try {
+                this.wait();  // Wait for the client to notify with the selected action
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return lastAction;
+    }
+    
 
     // Inner class for ClientObserver, implements Observer
     private class ClientObserver implements Observer {
