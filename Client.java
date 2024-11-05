@@ -10,7 +10,7 @@ public class Client implements Observer {
     private ObjectOutputStream output;
     private IPlayer currentPlayer;
     private ClientGUI gui;
-    private String lastAction;  // Store last action chosen by the client
+    //private String lastAction;  // Store last action chosen by the client
 
     public Client(String address, int port, ClientGUI gui, IPlayer player) {
         this.gui = gui;  // Reference to the GUI
@@ -80,7 +80,7 @@ public class Client implements Observer {
     }
 
     public void actionSelected(String action, ICard card) {
-        lastAction = action;
+        //lastAction = action;
     
         // If a card is selected for playCard, include the card in the message
         if (action.equals("playCard") && card != null) {
@@ -88,11 +88,6 @@ public class Client implements Observer {
             sendToServer(card);
         } else {
             sendToServer(action);  // Send only the action for other types
-        }
-    
-        // Notify the server that the action is ready
-        synchronized(this) {
-            this.notify();
         }
     }
 
@@ -124,7 +119,8 @@ public class Client implements Observer {
     }
 
     public String getLastAction() {
-        return lastAction;
+        //return lastAction;
+        return null;
     }
 
     private static String generateUserId() {

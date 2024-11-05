@@ -15,6 +15,7 @@ public class Server implements Observable {
     private Map<String, Observer> observers = new HashMap<>(); // Dictionary of observers (clients) and player names
     private String lastAction;  // Store last action chosen by the client
     public ICard card;
+    private final Object actionLock = new Object();
 
     // Private constructor (Singleton)
     private Server(int port) throws IOException {
@@ -114,6 +115,9 @@ public class Server implements Observable {
                             //notifyObservers(message);
                             System.out.println("Received action from client: " + message);
                             lastAction = message;
+                            synchronized(actionLock) {
+                                actionLock.notify();  // Notify that an action is ready
+                            }
 
                         } else {
                             System.out.println("Received string from client: " + message);
@@ -256,14 +260,20 @@ public class Server implements Observable {
 
         observer.update(options);  // Send options to the client
         // Synchronize and wait for client's response
-        // synchronized(this) {
-        //     try {
-        //         this.wait();  // Wait for the client to notify with the selected action
-        //     } catch (InterruptedException e) {
-        //         e.printStackTrace();
-        //     }
-        // }
+        synchronized(actionLock) {
+            try {
+                actionLock.wait();  // Wait for the client to notify with the selected action
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         return lastAction;
+    }
+    private void onActionReceived(String action) {
+        synchronized(actionLock) {
+            lastAction = action;
+            actionLock.notify();  // Notify that an action is ready
+        }
     }
     
 
