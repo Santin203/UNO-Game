@@ -113,12 +113,16 @@ public class Server implements Observable {
                             clientObserver.update("PLAYER_REQUEST");    //Request player instance from client
                         } else if (message.contains("playCard") || message.contains("pickCard") || message.contains("callUno")) {
                             //notifyObservers(message);
-                            System.out.println("Received action from client: " + message);
+                            if(message.contains("playCard")) {
+                                String stringIndex = message.replace("playCard","").trim();
+                                cardIndex = Integer.parseInt(stringIndex);
+                                System.out.println("Received action from client: " + message);
+                                message = "playCard";
+                            }
                             lastAction = message;
                             synchronized(actionLock) {
                                 actionLock.notify();  // Notify that an action is ready
                             }
-
                         } else {
                             System.out.println("Received string from client: " + message);
                             notifyObservers(message);
@@ -134,10 +138,7 @@ public class Server implements Observable {
                     } else if (clientMessage instanceof Boolean) {
                         notifyObservers("Game has started!");
                         startGame();
-                    } else if (clientMessage instanceof Integer){
-                        cardIndex = (Integer) clientMessage;
-                        System.out.println("Received card index from client: " + cardIndex);
-                    }
+                    } 
                         
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -238,12 +239,12 @@ public class Server implements Observable {
     }
     
     public void sendPlayers(ArrayList<IPlayer> players) {
-        for(var entry: observers.entrySet()) {
+        for(String observerName : observers.keySet()) {
             IPlayer currentPlayer = new Player("");
 
             Map <String, Integer> otherPlayers = new HashMap<>();
             for(IPlayer player : players) {
-                if(!(entry.getKey().equals(player.getName()))) {
+                if(!(observerName.equals(player.getName()))) {
                     otherPlayers.put(player.getName(), player.getHandSize());
                 }
                 else {
@@ -252,9 +253,9 @@ public class Server implements Observable {
                 }
             }
             //Send dictionary with other players to current observer
-            entry.getValue().update(otherPlayers);
+            observers.get(observerName).update(otherPlayers);
             //Send updated player instance to client
-            entry.getValue().update(currentPlayer);
+            observers.get(observerName).update(currentPlayer);
         }
     }
 

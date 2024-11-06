@@ -113,8 +113,8 @@ public class ClientGUI {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (client != null) {
-                        button.setVisible(false);
-                        button.setEnabled(false);
+                        //button.setVisible(true);
+                        //button.setEnabled(true);
                         //Send action to server
                         
                         client.actionSelected("playCard", cardIndex);
@@ -395,6 +395,8 @@ public class ClientGUI {
         // Remove the old cards panel from handPanel
         handPanel.remove(cardsScrollPane); // Assuming cardsPanel is the second component in handPanel
         // Recreate the cards panel with the updated info
+        cardsScrollPane.removeAll();
+        cardsPanel.removeAll();
         createCardsPanel();
         cardsScrollPane = createScrollablePane(cardsPanel, false, 0, 0);
     

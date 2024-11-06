@@ -103,8 +103,8 @@ public class Client implements Observer {
     
         // If a card is selected for playCard, include the card in the message
         if (action.equals("playCard")) {
-            sendToServer(action);
-            sendToServer(cardIndex);
+            String actionCommand = action + cardIndex;
+            sendToServer(actionCommand);
         } else {
             sendToServer(action);  // Send only the action for other types
         }
