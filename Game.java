@@ -36,8 +36,7 @@ public class Game implements IGame {
     public void startGame() {
         setupGamePile();
         dealInitialCards();
-        gameServer.sendPlayers(players);
-        gameServer.sendTopPlayCard(discardPile.getTopCard());
+        updateServer();
 
         //Game loop
         while(true)
@@ -45,7 +44,7 @@ public class Game implements IGame {
             checkFewCardsDeck();
             currentPlayer = players.get(playerIndex);
             nextTurn();
-            gameServer.sendTopPlayCard(discardPile.getTopCard());
+            updateServer();
             //If current player has no more cards
             if(currentPlayer.checkStatus() == 1)
             {
@@ -111,10 +110,41 @@ public class Game implements IGame {
         //Get action from player
         String action = currentPlayer.getAction(options, gameServer);
         //Execute action from player
+        executeAction(action, currentHand, topCard, playableIndexes);
+    }
+
+    private List<String> getAvailableOptions(ArrayList<Integer> playableIndexes) {
+        List<String> options = new ArrayList<>();
+        if (currentPlayer.hasPlayableCard(discardPile.getTopCard())) {
+            options.add("playCard");
+        }
+        options.add("pickCard");
+        if ((currentPlayer.getHandSize() == 2)&&(!playableIndexes.isEmpty())) {
+            options.add("callUno");
+        }
+        if((previousPlayer != null) && (previousPlayer != currentPlayer)) {
+            if ((!previousPlayer.hasCalledUno())&&(previousPlayer.getHandSize() == 1)) {
+                options.add("challengeUno");
+            }
+        }
+        return options;
+    }
+
+    private ArrayList<Integer> getPlayableIndexes(ArrayList<ICard> currentHand, ICard currentTopCard) {
+        ArrayList<Integer> playableIndexes = new ArrayList<>();
+        for (int i = 0; i < currentHand.size(); i++) {
+            if (currentHand.get(i).canBePlayed(currentTopCard)) {
+                playableIndexes.add(i);
+            }
+        }
+        return playableIndexes;
+    }
+
+    private void executeAction(String action, ArrayList<ICard> currentHand, ICard currentTopCard, ArrayList<Integer> playableIndexes) {
         switch(action)
         {
             case "pickCard" -> {
-                handlePickCard(currentHand, topCard);
+                handlePickCard(currentHand, currentTopCard);
                 System.out.println("Player " + currentPlayer.getName() + " picked a card");
             }
             case "playCard" -> {
@@ -136,44 +166,7 @@ public class Game implements IGame {
                 System.out.println("Invalid action");
                 return;
             }
-        }
-        gameServer.sendPlayers(players);
-    }
-
-    private List<String> getAvailableOptions(ArrayList<Integer> playableIndexes) {
-        List<String> options = new ArrayList<>();
-        if (currentPlayer.hasPlayableCard(discardPile.getTopCard())) {
-            options.add("playCard");
-        }
-        options.add("pickCard");
-        if ((currentPlayer.getHandSize() == 2)&&(!playableIndexes.isEmpty())) {
-            options.add("callUno");
-        }
-        if((previousPlayer != null) && (previousPlayer != currentPlayer)) {
-            if ((!previousPlayer.hasCalledUno())&&(previousPlayer.getHandSize() == 1)) {
-                options.add("challengeUno");
-            }
-        }
-        return options;
-    }
-
-    // private boolean checkUnoPlayers() {
-    //     for (IPlayer player : players) {
-    //         if (player.needsToCallUno() && !player.hasCalledUno()) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
-
-    private ArrayList<Integer> getPlayableIndexes(ArrayList<ICard> currentHand, ICard currentTopCard) {
-        ArrayList<Integer> playableIndexes = new ArrayList<>();
-        for (int i = 0; i < currentHand.size(); i++) {
-            if (currentHand.get(i).canBePlayed(currentTopCard)) {
-                playableIndexes.add(i);
-            }
-        }
-        return playableIndexes;
+        }     
     }
 
     private void handlePickCard(ArrayList<ICard> currentHand, ICard currentTopCard) {
@@ -198,13 +191,6 @@ public class Game implements IGame {
         ICard cardToPlay = currentPlayer.getHand().get(cardIndexToPlay);
         if (cardToPlay != null) {
             currentPlayer.playCard(cardToPlay, this);
-        }
-        //checkUnoCall();
-    }
-
-    private void checkUnoCall() {
-        if (currentPlayer.needsToCallUno() && !currentPlayer.hasCalledUno()) {
-            currentPlayer.giveUnoPenalty(this);
         }
     }
 
@@ -262,6 +248,11 @@ public class Game implements IGame {
 
     @Override
     public void removePlayer(IPlayer player) {
+        players.remove(player);
+    }
 
+    void updateServer() {
+        gameServer.sendPlayers(players);
+        gameServer.sendTopPlayCard(discardPile.getTopCard());
     }
 }

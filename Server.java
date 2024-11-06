@@ -5,15 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// Singleton Server class
 public class Server implements Observable {
-    private static Server instance = null;  // Singleton instance
+    private static Server instance = null;
     private ArrayList<IPlayer> players = new ArrayList<>();
     private Map<String, Integer> playerInfo = new HashMap<>();
     private IGame game;
     private ServerSocket serverSocket;
-    private Map<String, Observer> observers = new HashMap<>(); // Dictionary of observers (clients) and player names
-    private String lastAction;  // Store last action chosen by the client
+    private Map<String, Observer> observers = new HashMap<>();
+    private String lastAction; 
     private String selectedColor;
     public Integer cardIndex;
     private final Object actionLock = new Object();
@@ -289,9 +288,8 @@ public class Server implements Observable {
         return lastAction;
     }
 
-    public String getPlayerColor(IPlayer player) {
+    public String getPlayerColor(IPlayer player, String[] colors) {
         ClientObserver observer = (ClientObserver) observers.get(player.getName());
-        String[] colors = new String[]{"red", "blue", "yellow","green"};
         
         observer.update(colors);
         synchronized(colorLock) {
@@ -304,13 +302,6 @@ public class Server implements Observable {
 
         return selectedColor;
     }
-    private void onActionReceived(String action) {
-        synchronized(actionLock) {
-            lastAction = action;
-            actionLock.notify();  // Notify that an action is ready
-        }
-    }
-    
 
     // Inner class for ClientObserver, implements Observer
     private class ClientObserver implements Observer {

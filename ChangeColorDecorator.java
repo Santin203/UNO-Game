@@ -1,7 +1,8 @@
 public class ChangeColorDecorator extends BaseCard {
     private BaseCard baseCard;
     private String colorToChange;
-    private String[] colors = {"Red", "Green", "Blue", "Yellow"};
+    private String[] colors = new String[]{"red", "blue", "yellow","green"};
+    
 
     public ChangeColorDecorator(BaseCard baseCard) {
         super();
@@ -22,7 +23,7 @@ public class ChangeColorDecorator extends BaseCard {
     public void play(IGame game) {
         //IMPLEMENT LOGIC
         Server gameServer = game.getServer();
-        String color = gameServer.getPlayerColor(game.getCurrentPlayer());
+        String color = gameServer.getPlayerColor(game.getCurrentPlayer(), colors);
         changeColor(color);
         baseCard.play(game);
         System.out.println("Color changed to " + colorToChange);
