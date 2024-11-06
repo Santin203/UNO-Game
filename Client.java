@@ -80,6 +80,8 @@ public class Client implements Observer {
             if (firstElement instanceof Integer) {
                 ArrayList<Integer> playableIndexes = new ArrayList<Integer>((List<Integer>)options);
                 gui.updatePlayableIndexes(playableIndexes);
+                List<String> noOptions = new ArrayList<String>(){};
+                gui.updateActionButtons(noOptions);
             } else if (firstElement instanceof String) {
                 gui.updateActionButtons((List<String>) options);
             } else {

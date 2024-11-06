@@ -223,10 +223,6 @@ public class Server implements Observable {
         }
     }
 
-    public void updatePlayer() {
-        
-    }
-
     public void sendPlayableIndexes(ArrayList<Integer> playableIndexes, String playerName) {
         //Search Client in Observers dictionary by name
         Observer observer = observers.get(playerName);

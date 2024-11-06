@@ -361,7 +361,7 @@ public class ClientGUI {
 
         // Remove the old player panel
         gamePanel.remove(playerScrollPane);
-
+        playerScrollPane = null;
         // Recreate player panel with updated info
         createPlayerGrid();
         playerScrollPane = createScrollablePane(playersPanel, true, 300, 200);
@@ -393,7 +393,8 @@ public class ClientGUI {
     public void updateCardsPanel() {
         // Remove the old cards panel from handPanel
         handPanel.remove(cardsScrollPane); // Assuming cardsPanel is the second component in handPanel
-    
+        
+        cardsScrollPane = null;
         // Recreate the cards panel with the updated info
         createCardsPanel();
         cardsScrollPane = createScrollablePane(cardsPanel, false, 0, 0);

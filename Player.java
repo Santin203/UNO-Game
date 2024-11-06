@@ -30,7 +30,7 @@ public class Player implements IPlayer, Serializable {
         card.play(game);
         game.getDiscardDeck().addCard(card);
         hand.remove(card);
-
+        
         // Update status after playing a card
         updateStatusPlay();
     }
