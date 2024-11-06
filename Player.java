@@ -87,8 +87,8 @@ public class Player implements IPlayer, Serializable {
     }
 
     @Override
-    public ICard selectCardToPlay(ICard topCard, Server server) {
-        return server.card;
+    public int selectCardToPlay(Server server) {
+        return server.cardIndex;
     }
 
     @Override
@@ -114,6 +114,11 @@ public class Player implements IPlayer, Serializable {
             drawCard(game.getGameDeck().giveCard());
             drawCard(game.getGameDeck().giveCard());
         }
+    }
+
+    @Override
+    public void removeCard(ICard card) {
+        hand.remove(card);
     }
 
 }

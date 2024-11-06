@@ -109,8 +109,6 @@ public class Game implements IGame {
         gameServer.sendPlayableIndexes(playableIndexes, currentPlayer.getName());
         //Get action from player
         String action = currentPlayer.getAction(options, gameServer);
-        gameServer.sendPlayers(players);
-        gameServer.sendTopPlayCard(gamePile.getTopCard());
         //Execute action from player
         switch(action)
         {
@@ -120,7 +118,7 @@ public class Game implements IGame {
 
             }
             case "playCard" -> {
-                handlePlayCard(topCard);
+                handlePlayCard();
 
             }
             default -> {
@@ -128,6 +126,8 @@ public class Game implements IGame {
                 return;
             }
         }
+        //ICard removeCard = currentHand.get(0);
+        //currentPlayer.removeCard(removeCard);
         gameServer.sendPlayers(players);
     }
 
@@ -169,20 +169,18 @@ public class Game implements IGame {
 
         if (lastDrawnCard == null) {
             System.out.println("Player " + currentPlayer.getName() + " drew a card");
-            gameServer.sendPlayers(players);
         }
 
         if (lastDrawnCard.canBePlayed(currentTopCard)) {
             currentPlayer.playCard(lastDrawnCard, this);
-            gameServer.sendPlayers(players);
         }
     }
 
-    private void handlePlayCard(ICard topCard) {
-        ICard cardToPlay = currentPlayer.selectCardToPlay(topCard, gameServer);
+    private void handlePlayCard() {
+        int cardIndexToPlay = currentPlayer.selectCardToPlay(gameServer);
+        ICard cardToPlay = currentPlayer.getHand().get(cardIndexToPlay);
         if (cardToPlay != null) {
             currentPlayer.playCard(cardToPlay, this);
-            gameServer.sendPlayers(players);
         }
         //checkUnoCall();
     }

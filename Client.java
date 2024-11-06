@@ -76,28 +76,35 @@ public class Client implements Observer {
         }
         else if (message instanceof List<?> options) {
             // Determine type based on the first element if available
-            Object firstElement = options.get(0);
-            if (firstElement instanceof Integer) {
+            if(!options.isEmpty()) {
+                Object firstElement = options.get(0);
+                if (firstElement instanceof Integer) {
+                    ArrayList<Integer> playableIndexes = new ArrayList<Integer>((List<Integer>)options);
+                    gui.updatePlayableIndexes(playableIndexes);
+                    List<String> noOptions = new ArrayList<String>(){};
+                    gui.updateActionButtons(noOptions);
+                } else if (firstElement instanceof String) {
+                    gui.updateActionButtons((List<String>) options);
+                } else {
+                    System.err.println("List type is unknown");
+                }
+            }
+            else {
                 ArrayList<Integer> playableIndexes = new ArrayList<Integer>((List<Integer>)options);
                 gui.updatePlayableIndexes(playableIndexes);
-                List<String> noOptions = new ArrayList<String>(){};
-                gui.updateActionButtons(noOptions);
-            } else if (firstElement instanceof String) {
-                gui.updateActionButtons((List<String>) options);
-            } else {
-                System.err.println("List type is unknown");
             }
+            
         }
         // Update GUI with messages from the server
     }
 
-    public void actionSelected(String action, ICard card) {
+    public void actionSelected(String action, int cardIndex) {
         //lastAction = action;
     
         // If a card is selected for playCard, include the card in the message
-        if (action.equals("playCard") && card != null) {
+        if (action.equals("playCard")) {
             sendToServer(action);
-            sendToServer(card);
+            sendToServer(cardIndex);
         } else {
             sendToServer(action);  // Send only the action for other types
         }

@@ -95,7 +95,7 @@ public class ClientGUI {
         for (int i = 0; i < currentHand.size(); i++) {
             int xCoordinates = getCardXCoordinates(currentHand.get(i));
             int yCoordinates = getCardYCoordinates(currentHand.get(i));
-            ICard card = currentHand.get(i);
+            int cardIndex = i;
             JButton button = new JButton(new ImageIcon(spriteSheet.getSubimage(xCoordinates, yCoordinates, 32, 48)
                     .getScaledInstance(32, 48, Image.SCALE_SMOOTH)));
             button.setPreferredSize(new Dimension(64, 96));
@@ -103,7 +103,7 @@ public class ClientGUI {
             if(!playableIndexes.isEmpty()) {
                 if(playableIndexes.contains(-1))
                 {
-                    button.setEnabled(false);
+                    button.setEnabled(false);;
                 }
                 else if(!playableIndexes.contains(i)) {
                     button.setEnabled(false);
@@ -116,7 +116,8 @@ public class ClientGUI {
                         button.setVisible(false);
                         button.setEnabled(false);
                         //Send action to server
-                        client.actionSelected("playCard", card);
+                        
+                        client.actionSelected("playCard", cardIndex);
                     }
                 }
             });
@@ -161,7 +162,7 @@ public class ClientGUI {
                     // unoButton.setVisible(false);
                     // unoButton.setEnabled(false);
                     //Send action to server
-                    client.actionSelected("callUno", null);
+                    client.actionSelected("callUno", -1);
                 }
             }
         });
@@ -200,7 +201,7 @@ public class ClientGUI {
                     // unoButton.setVisible(false);
                     // unoButton.setEnabled(false);
                     //Send action to server
-                    client.actionSelected("callUno", null);
+                    client.actionSelected("callUno", -1);
                 }
             }
         });
@@ -223,7 +224,7 @@ public class ClientGUI {
                     // pickCardButton.setVisible(false);
                     // pickCardButton.setEnabled(false);
                     //Send action to server
-                    client.actionSelected("pickCard", null);
+                    client.actionSelected("pickCard", -1);
                 }
             }
         });
@@ -393,8 +394,6 @@ public class ClientGUI {
     public void updateCardsPanel() {
         // Remove the old cards panel from handPanel
         handPanel.remove(cardsScrollPane); // Assuming cardsPanel is the second component in handPanel
-        
-        cardsScrollPane = null;
         // Recreate the cards panel with the updated info
         createCardsPanel();
         cardsScrollPane = createScrollablePane(cardsPanel, false, 0, 0);
@@ -442,7 +441,7 @@ public class ClientGUI {
             coordinates = 352;
         }
         else if(card instanceof ChangeColorDecorator) {
-            coordinates = 160;
+            coordinates = 0;
         }
         else if(card instanceof DrawKDecorator drawKDecorator) {
             int drawCount = drawKDecorator.getDrawCount();
@@ -450,7 +449,7 @@ public class ClientGUI {
                 coordinates = 384;
             }
             else {
-                coordinates = 0;
+                coordinates = 160;
             }
         }
         return coordinates;

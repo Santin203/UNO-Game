@@ -14,7 +14,7 @@ public class Server implements Observable {
     private ServerSocket serverSocket;
     private Map<String, Observer> observers = new HashMap<>(); // Dictionary of observers (clients) and player names
     private String lastAction;  // Store last action chosen by the client
-    public ICard card;
+    public Integer cardIndex;
     private final Object actionLock = new Object();
 
     // Private constructor (Singleton)
@@ -134,9 +134,9 @@ public class Server implements Observable {
                     } else if (clientMessage instanceof Boolean) {
                         notifyObservers("Game has started!");
                         startGame();
-                    } else if (clientMessage instanceof ICard){
-                        card = (ICard) clientMessage;
-                        System.out.println("Received card from client: " + card);
+                    } else if (clientMessage instanceof Integer){
+                        cardIndex = (Integer) clientMessage;
+                        System.out.println("Received card index from client: " + cardIndex);
                     }
                         
                 }
