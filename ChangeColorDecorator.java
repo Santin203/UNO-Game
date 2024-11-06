@@ -21,7 +21,9 @@ public class ChangeColorDecorator extends BaseCard {
     @Override
     public void play(IGame game) {
         //IMPLEMENT LOGIC
-        changeColor("red");
+        Server gameServer = game.getServer();
+        String color = gameServer.getPlayerColor(game.getCurrentPlayer());
+        changeColor(color);
         baseCard.play(game);
         System.out.println("Color changed to " + colorToChange);
     }

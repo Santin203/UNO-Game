@@ -33,6 +33,7 @@ public class Client implements Observer {
         try {
             output.writeObject(message);
             output.flush();
+            output.reset();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,6 +52,10 @@ public class Client implements Observer {
             }
             else if (serverMessage.equals("PLAYER_REQUEST")) {
                 sendToServer(currentPlayer);
+            }
+            else if (serverMessage.contains("WON")) {
+                gui.updateMessageArea(serverMessage);
+                gui.disableAllComponents();
             }
             else {
                 gui.updateMessageArea(serverMessage);
@@ -94,6 +99,9 @@ public class Client implements Observer {
                 gui.updatePlayableIndexes(playableIndexes);
             }
             
+        }
+        else if (message instanceof String[] colors) {
+            sendToServer("COLOR_CHANGE"+gui.showColorSelectionDialog(colors));
         }
         // Update GUI with messages from the server
     }

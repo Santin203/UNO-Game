@@ -103,11 +103,14 @@ public class ClientGUI {
             if(!playableIndexes.isEmpty()) {
                 if(playableIndexes.contains(-1))
                 {
-                    button.setEnabled(false);;
+                    button.setEnabled(false);
                 }
                 else if(!playableIndexes.contains(i)) {
                     button.setEnabled(false);
                 }
+            }
+            else {
+                button.setEnabled(false);
             }
             button.addActionListener(new ActionListener() {
                 @Override
@@ -159,8 +162,8 @@ public class ClientGUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (client != null) {
-                    // unoButton.setVisible(false);
-                    // unoButton.setEnabled(false);
+                    unoButton.setVisible(false);
+                    unoButton.setEnabled(false);
                     //Send action to server
                     client.actionSelected("callUno", -1);
                 }
@@ -198,10 +201,10 @@ public class ClientGUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (client != null) {
-                    // unoButton.setVisible(false);
-                    // unoButton.setEnabled(false);
+                    challengeUnoButton.setVisible(false);
+                    challengeUnoButton.setEnabled(false);
                     //Send action to server
-                    client.actionSelected("callUno", -1);
+                    client.actionSelected("challengeUno", -1);
                 }
             }
         });
@@ -439,6 +442,18 @@ public class ClientGUI {
         unoButton.setVisible(options.contains("callUno"));
         pickCardButton.setEnabled(options.contains("pickCard"));
         pickCardButton.setVisible(options.contains("pickCard"));
+        challengeUnoButton.setEnabled(options.contains("challengeUno"));
+        challengeUnoButton.setVisible(options.contains("challengeUno"));
+    }
+
+    public void disableAllComponents() {
+        for (Component component : handPanel.getComponents()) 
+        if (component == buttonPanel) {
+            continue; // Skip the component we want to keep enabled
+        }else {
+            component.setEnabled(false);
+            component.setVisible(false);
+        }
     }
     
 
@@ -456,7 +471,23 @@ public class ClientGUI {
             coordinates = 352;
         }
         else if(card instanceof ChangeColorDecorator) {
-            coordinates = 0;
+            switch(card.getColor()) {
+                case "red":
+                    coordinates = 32;
+                    break;
+                case "blue":
+                    coordinates = 64;
+                    break;
+                case "yellow":
+                    coordinates = 96;
+                    break;
+                case "green":
+                    coordinates = 128;
+                    break;
+                case "black":
+                    coordinates = 0;
+                default:
+            }
         }
         else if(card instanceof DrawKDecorator drawKDecorator) {
             int drawCount = drawKDecorator.getDrawCount();
@@ -464,7 +495,24 @@ public class ClientGUI {
                 coordinates = 384;
             }
             else {
-                coordinates = 160;
+                switch(card.getColor()) {
+                    case "red":
+                        coordinates = 192;
+                        break;
+                    case "blue":
+                        coordinates = 224;
+                        break;
+                    case "yellow":
+                        coordinates = 256;
+                        break;
+                    case "green":
+                        coordinates = 288;
+                        break;
+                    case "black":
+                        coordinates = 160;
+                    default:
+                }
+                
             }
         }
         return coordinates;
@@ -473,6 +521,10 @@ public class ClientGUI {
     private int getCardYCoordinates(ICard card) {
         int coordinates = 0;
         String color = card.getColor();
+        if((card instanceof DrawKDecorator drawCard)&&(drawCard.getDrawCount() == 4)||(card instanceof ChangeColorDecorator)) {
+            coordinates = 192;
+            return coordinates;
+        }
         switch(color) {
             case "red":
                 coordinates = 0;

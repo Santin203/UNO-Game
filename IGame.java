@@ -11,4 +11,6 @@ public interface IGame {
     int getPlayerIndex();
     void revertOrder();
     void removePlayer(IPlayer player);
+    Server getServer();
+    IPlayer getCurrentPlayer();
 }

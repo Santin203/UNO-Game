@@ -98,9 +98,7 @@ public class Player implements IPlayer, Serializable {
 
     @Override
     public void callUno() {
-        if (hand.size() == 1) {
-            unoCalled = true;
-        }
+        unoCalled = true;
     }
 
     @Override

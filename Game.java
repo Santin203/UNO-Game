@@ -51,6 +51,7 @@ public class Game implements IGame {
             {
                 //Current player Won, game ends
                 System.out.println(currentPlayer.getName() + " has won the game!");
+                gameServer.notifyObservers("Player: "+currentPlayer.getName()+ "has WON!");
                 break;
             }
             previousPlayer = currentPlayer;
@@ -73,7 +74,7 @@ public class Game implements IGame {
     }
 
     private void dealInitialCards() {
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 3; i++) {
             for (IPlayer player : players) {
                 player.drawCard(gamePile.giveCard());
             }
@@ -104,7 +105,7 @@ public class Game implements IGame {
         ArrayList<Integer> playableIndexes = getPlayableIndexes(currentHand, topCard);
         
         // Define player's options for current turn
-        List<String> options = getAvailableOptions();
+        List<String> options = getAvailableOptions(playableIndexes);
         //Send current player its playable indexes
         gameServer.sendPlayableIndexes(playableIndexes, currentPlayer.getName());
         //Get action from player
@@ -115,30 +116,42 @@ public class Game implements IGame {
             case "pickCard" -> {
                 handlePickCard(currentHand, topCard);
                 System.out.println("Player " + currentPlayer.getName() + " picked a card");
-
             }
             case "playCard" -> {
                 handlePlayCard();
-
+            }
+            case "callUno" -> {
+                currentPlayer.setStatus(2);
+                currentPlayer.callUno();
+                System.out.println("Player " + currentPlayer.getName() + " called UNO!");
+                playerIndex += (-1)*order;
+                
+            }
+            case "challengeUno" -> {
+                previousPlayer.giveUnoPenalty(this);
+                System.out.println("Player " + currentPlayer.getName() + " called UNO!");
             }
             default -> {
                 System.out.println("Invalid action");
                 return;
             }
         }
-        //ICard removeCard = currentHand.get(0);
-        //currentPlayer.removeCard(removeCard);
         gameServer.sendPlayers(players);
     }
 
-    private List<String> getAvailableOptions() {
+    private List<String> getAvailableOptions(ArrayList<Integer> playableIndexes) {
         List<String> options = new ArrayList<>();
         if (currentPlayer.hasPlayableCard(discardPile.getTopCard())) {
             options.add("playCard");
         }
         options.add("pickCard");
-        if (currentPlayer.getHandSize() == 2) {
+        if ((currentPlayer.getHandSize() == 2)&&(!playableIndexes.isEmpty())) {
             options.add("callUno");
+        }
+        if((previousPlayer != null) && (previousPlayer != currentPlayer)) {
+            if ((!previousPlayer.hasCalledUno())&&(previousPlayer.getHandSize() == 1)) {
+                options.add("challengeUno");
+            }
         }
         return options;
     }
@@ -173,6 +186,9 @@ public class Game implements IGame {
 
         if (lastDrawnCard.canBePlayed(currentTopCard)) {
             currentPlayer.playCard(lastDrawnCard, this);
+            if(currentPlayer.getHandSize() == 1) {
+                currentPlayer.callUno();
+            }
         }
     }
 
@@ -231,6 +247,16 @@ public class Game implements IGame {
     @Override 
     public void revertOrder() {
         order = order * -1;
+    }
+
+    @Override
+    public Server getServer() {
+        return gameServer;
+    }
+
+    @Override
+    public IPlayer getCurrentPlayer() {
+        return currentPlayer;
     }
 
     @Override

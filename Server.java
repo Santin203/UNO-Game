@@ -14,8 +14,10 @@ public class Server implements Observable {
     private ServerSocket serverSocket;
     private Map<String, Observer> observers = new HashMap<>(); // Dictionary of observers (clients) and player names
     private String lastAction;  // Store last action chosen by the client
+    private String selectedColor;
     public Integer cardIndex;
     private final Object actionLock = new Object();
+    private final Object colorLock = new Object();
 
     // Private constructor (Singleton)
     private Server(int port) throws IOException {
@@ -111,7 +113,7 @@ public class Server implements Observable {
                             String playerName = message.replace("NAME_REQUEST","").trim();
                             observers.put(playerName, clientObserver);
                             clientObserver.update("PLAYER_REQUEST");    //Request player instance from client
-                        } else if (message.contains("playCard") || message.contains("pickCard") || message.contains("callUno")) {
+                        } else if (message.contains("playCard") || message.contains("pickCard") || message.contains("callUno") || message.contains("challengeUno")) {
                             //notifyObservers(message);
                             if(message.contains("playCard")) {
                                 String stringIndex = message.replace("playCard","").trim();
@@ -123,6 +125,12 @@ public class Server implements Observable {
                             synchronized(actionLock) {
                                 actionLock.notify();  // Notify that an action is ready
                             }
+                        } else if (message.contains("COLOR_CHANGE")) {
+                            selectedColor = message.replace("COLOR_CHANGE","").trim();
+                            synchronized(colorLock) {
+                                colorLock.notify();  // Notify that an action is ready
+                            }
+
                         } else {
                             System.out.println("Received string from client: " + message);
                             notifyObservers(message);
@@ -279,6 +287,22 @@ public class Server implements Observable {
             }
         }
         return lastAction;
+    }
+
+    public String getPlayerColor(IPlayer player) {
+        ClientObserver observer = (ClientObserver) observers.get(player.getName());
+        String[] colors = new String[]{"red", "blue", "yellow","green"};
+        
+        observer.update(colors);
+        synchronized(colorLock) {
+            try {
+                colorLock.wait();  // Wait for the client to notify with the selected color
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return selectedColor;
     }
     private void onActionReceived(String action) {
         synchronized(actionLock) {
