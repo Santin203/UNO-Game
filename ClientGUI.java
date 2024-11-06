@@ -556,7 +556,7 @@ public class ClientGUI {
             colors[0]
         );
 
-        return selectedColor != null ? selectedColor.toLowerCase() : null;
+        return selectedColor != null ? selectedColor.toLowerCase() : "red";
     }
 
     // Method to trigger when a ChangeColor card is played

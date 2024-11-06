@@ -74,7 +74,7 @@ public class Game implements IGame {
     }
 
     private void dealInitialCards() {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 7; i++) {
             for (IPlayer player : players) {
                 player.drawCard(gamePile.giveCard());
             }
@@ -130,6 +130,7 @@ public class Game implements IGame {
             case "challengeUno" -> {
                 previousPlayer.giveUnoPenalty(this);
                 System.out.println("Player " + currentPlayer.getName() + " called UNO!");
+                playerIndex += (-1)*order;
             }
             default -> {
                 System.out.println("Invalid action");
