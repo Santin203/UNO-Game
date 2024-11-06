@@ -115,9 +115,19 @@ public class Client implements Observer {
         public void run() {
             try {
                 while (true) {
-                    Object message = input.readObject();
-                    System.out.println("Received from server: " + message);
-                    update(message);  // Call the update method
+                    // Discard any pending objects in the stream before reading the latest one
+                    Object latestMessage = null;
+                    while (input.available() > 0) {
+                        latestMessage = input.readObject();
+                        System.out.println("Discarding stale message: " + latestMessage);
+                    }
+                    if (latestMessage == null) {
+                        // If no stale messages, read the next object
+                        latestMessage = input.readObject();
+                    }
+
+                    System.out.println("Received from server: " + latestMessage);
+                    update(latestMessage);  // Call the update method with the latest message
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();

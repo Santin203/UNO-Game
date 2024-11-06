@@ -392,17 +392,30 @@ public class ClientGUI {
     }
 
     public void updateCardsPanel() {
-        // Remove the old cards panel from handPanel
-        handPanel.remove(cardsScrollPane); // Assuming cardsPanel is the second component in handPanel
-        // Recreate the cards panel with the updated info
-        cardsScrollPane.removeAll();
-        cardsPanel.removeAll();
+        // Explicitly remove all components from cardsPanel and scroll pane
+        if (cardsScrollPane != null) {
+            handPanel.remove(cardsScrollPane);
+            cardsScrollPane.removeAll();
+        }
+        if (cardsPanel != null) {
+            cardsPanel.removeAll();
+        }
+
+        // Recreate cardsPanel and populate it with updated card buttons
         createCardsPanel();
+
+        // Wrap the new cardsPanel in a fresh JScrollPane
         cardsScrollPane = createScrollablePane(cardsPanel, false, 0, 0);
-    
-        // Add the updated cards panel back to handPanel
+
+        // Add the new scroll pane to handPanel
         handPanel.add(cardsScrollPane, BorderLayout.CENTER);
-        // Refresh the frame to display updates
+
+        // Call invalidate on handPanel and frame to force a full layout update
+        handPanel.invalidate();
+        handPanel.revalidate();
+        handPanel.repaint();
+        
+        frame.invalidate();
         frame.revalidate();
         frame.repaint();
     }

@@ -301,6 +301,7 @@ public class Server implements Observable {
             try {
                 output.writeObject(message);  // Send message to client
                 output.flush();
+                output.reset();  // Clears the cache, forcing a full serialization next time
             } catch (IOException e) {
                 e.printStackTrace();
             }
